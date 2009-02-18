@@ -5,8 +5,8 @@ require 'RMagick'
 @gray = @image.quantize(256, Magick::GRAYColorspace)
 @gray_view = @gray.view(0,0,@gray.columns,@gray.rows)
 
-1.upto(@gray.rows - 2) do |x|
-  1.upto(@gray.columns - 2) do |y|
+1.upto(100) do |x|
+  1.upto(100) do |y|
     val = (@gray_view[x+1][y+1].intensity + 
            @gray_view[x+1][y].intensity + 
            @gray_view[x+1][y-1].intensity - 
@@ -24,5 +24,5 @@ require 'RMagick'
   end
 end
 
-
-@gray_view.write("out.jpg")
+@gray_view.sync
+@gray.write("out.jpg")
