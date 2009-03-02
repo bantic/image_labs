@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'RMagick'
 
-@path = "smalltest.jpg"
+@path = "prewitt_in.jpg"
 @gray = Magick::ImageList.new(@path)
 # @gray = @image.quantize(256, Magick::GRAYColorspace)
 # @gray.write("gray.jpg")
@@ -56,4 +56,4 @@ bottom = @gray.rows - 1
 end
 
 @gray_out_view.sync
-@gray.write("out.jpg")
+@gray.write("prewitt_ruby_out.jpg")
