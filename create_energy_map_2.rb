@@ -1,8 +1,9 @@
 require 'rubygems'
 require 'RMagick'
+require 'pp'
 
-img_name = "edges-small-inverted-crop.jpg"
-img = Magick::ImageList.new(img_name)
+img_name = "images/edges-small-inverted-crop40x40"
+img = Magick::ImageList.new(img_name + ".jpg")
 view = img.view(0,0,img.rows,img.columns)
 
 right = img.columns - 1
@@ -23,43 +24,37 @@ puts "copying initial energy values into 2d array"
   end
 end
 
+def wait_for_key
+  return $stdin.gets
+end
+
 puts "calculating energy values"
 0.upto(bottom) do |y|
+  
+  if y > 0
+    # puts "#{y-1}: " + energy_array[y-1].collect{|int| sprintf("%5d",int)}.join("")
+    # puts "#{y}: " + energy_array[y].collect{|int| sprintf("%5d",int)}.join("")
+#    wait_for_key
+  end
+  
   0.upto(right) do |x|
-    # puts "start #{x},#{y}:#{ energy(view[y][x])} (red: #{energy(view[y][x])})"
-    
     base_energy = energy_array[y][x]
     
     if y == 0
       energy = base_energy
-      # puts "y == 0: energy = #{energy}"
     elsif x == 0 || x == right
-      # puts "edge"
       if x == 0 # left edge, only two pixels below
-        # puts "left edge"
-        # puts "#{x},#{y-1}:#{energy(view[y-1][x])}"
-        # puts "#{x + 1},#{y-1}:#{energy(view[y-1][x+1])}"
         energy = base_energy + [    energy_array[y - 1][x    ],
                                     energy_array[y - 1][x + 1]].min
       else      # right edge, only two pixels below
-        # puts "right edge"
-        # puts "#{x - 1},#{y-1}:#{energy(view[y-1][x-1])}"
-        # puts "#{x},#{y-1}:#{energy(view[y-1][x])}"
         energy = base_energy + [    energy_array[y - 1][x - 1],
                                     energy_array[y - 1][x    ]].min
       end
     else # not an edge, check all three pixels below
-      # puts "\t#{x-1},#{y-1}: #{energy(view[y - 1][x - 1])}"
-      # puts "\t#{x},#{y-1}: #{  energy(view[y - 1][x])}"
-      # puts "\t#{x+1},#{y-1}: #{energy(view[y - 1][x + 1])}"
-      
       energy = base_energy + [    energy_array[y - 1][x - 1],
                                   energy_array[y - 1][x    ],
                                   energy_array[y - 1][x + 1]].min
     end
-    
-    # puts "final energy for #{x},#{y}: #{energy}"
-    # energy_array[y][x] = [255,energy].min
     energy_array[y][x] = energy
     # puts '#' * 30
   end  
@@ -75,26 +70,42 @@ max_value = 0
 end
 
 # normalize values
-puts "normalizing values against max #{max_value}"
+puts "copying normalized values into view max #{max_value}"
 0.upto(bottom) do |y|
   0.upto(right) do |x|
-#    energy_array[y][x] = [255, energy_array[y][x]].min # 
-    energy_array[y][x] = ((energy_array[y][x] / max_value.to_f) * 255).to_i
+    val = ((energy_array[y][x] / max_value.to_f) * 255).to_i
+    view[y][x] = Magick::Pixel.new(val,val,val)
   end
 end
 
 
-# write out values
-puts "copying out energy values to view"
+# find the lowest energy value at each point
+puts "finding seam"
+min_pos = min_val = 0
 0.upto(bottom) do |y|
-  0.upto(right) do |x|
-    view[y][x] = Magick::Pixel.new(energy_array[y][x], energy_array[y][x], energy_array[y][x])
+  row_num = bottom - y
+  if row_num == bottom
+    min_val = energy_array[row_num].min
+    min_pos = energy_array[row_num].index(min_val)
+  else
+    if min_pos == 0 || min_pos == right
+      if min_pos == 0
+        min_val = energy_array[row_num][min_pos, 2].min
+        min_pos = energy_array[row_num][min_pos, 2].index(min_val) + min_pos
+      else
+        min_val = energy_array[row_num][min_pos - 1, 2].min
+        min_pos = energy_array[row_num][min_pos - 1, 2].index(min_val) - 1 + min_pos
+      end
+    else
+      min_val = energy_array[row_num][min_pos - 1, 3].min
+      min_pos = energy_array[row_num][min_pos - 1, 3].index(min_val) - 1 + min_pos
+    end
   end
+  view[row_num][min_pos] = Magick::Pixel.new(255,0,0)
 end
-
 
 view.sync
-output_path = "energy_out.jpg"
+output_path = "#{img_name}-energy_out-with-seam.jpg"
 
 puts "processed file #{img_name} to #{output_path}"
 
