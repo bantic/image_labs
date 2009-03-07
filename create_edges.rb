@@ -1,7 +1,8 @@
 require 'rubygems'
 require 'RMagick'
+require 'helper_methods'
 
-@path = "prewitt_in.jpg"  # we assume image is already grayscale
+@path = "images/prewitt_in.jpg"  # we assume image is already grayscale
 @gray = Magick::ImageList.new(@path)
 # @gray = @image.quantize(256, Magick::GRAYColorspace)
 # @gray.write("gray.jpg")
@@ -55,7 +56,7 @@ bottom = @gray.rows - 1
     
     val = 255 - magnitude # why do we invert this here? would be easier if we didn't do so later when finding energy
     puts "#{x},#{y}: #{magnitude}"
-    @gray_out_view[y][x] = Magick::Pixel.new(val,val,val)
+    @gray_out_view[y][x] = Magick::Pixel.gray(val)
   end
 end
 
