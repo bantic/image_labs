@@ -1,10 +1,19 @@
 class EqualImage
   def initialize(other_image)
-    @other_image = other_image
+    @other_image = load_image(other_image)
+  end
+  
+  def load_image(image)
+    case image
+    when String
+      Magick::ImageList.new(image)
+    else
+      image
+    end
   end
   
   def matches?(image)
-    @image = image
+    @image = load_image(image)
     return (@other_image <=> @image) == 0
   end
   
@@ -42,11 +51,15 @@ describe Image do
     img1.should equal_image(img2)
   end
   
-  it "should do equals" do
+  it "should do not equals" do
     img1 = Image.black_image
     img2 = Image.white_image
     
     img1.should_not equal_image(img2)
+  end
+  
+  it "should work with paths" do
+    "images/gray.jpg".should_not equal_image("images/testimage.jpg")
   end
   
 end
