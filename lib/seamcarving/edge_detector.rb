@@ -24,9 +24,11 @@ class EdgeDetector
   end
   
   def detect_edges!(output_path="prewitt_ruby_out.jpg")
-    @gray_view        = @gray.view(0,0,@gray.columns,@gray.rows)
+    @pixel_values     = @gray.two_d_array
+    @pixel_out_values = Array.two_d_array(@gray.columns, @gray.rows)
     @gray_out_view    = @gray.view(0,0,@gray.columns,@gray.rows)
-
+    
+    
     right = @gray.columns - 1
     bottom = @gray.rows - 1
 
@@ -43,8 +45,8 @@ class EdgeDetector
             [-1,0,1].each do |j|
               # can use .red since all pixel values are the same since we are grayscale
               # note that we have to invert j and i in the x_mask and y_mask calls
-              xsum += @gray_view[y + j][x + i].red * x_mask(i,j)
-              ysum += @gray_view[y + j][x + i].red * y_mask(i,j)
+              xsum += @pixel_values[y + j][x + i] * x_mask(i,j)
+              ysum += @pixel_values[y + j][x + i] * y_mask(i,j)
             end
           end
         end
@@ -52,11 +54,13 @@ class EdgeDetector
         magnitude = xsum.abs + ysum.abs
         magnitude = [magnitude, MAX_MAGNITUDE].min # cap at MAX_MAGNITUDE
 
-        @gray_out_view[y][x] = Magick::Pixel.gray(magnitude)
+        @gray_out_view[y][x] = gray(magnitude)
       end
     end
     
+    
     @gray_out_view.sync
+    
     @gray.write(output_path)
   end
   
