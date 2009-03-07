@@ -54,13 +54,12 @@ class EdgeDetector
         magnitude = xsum.abs + ysum.abs
         magnitude = [magnitude, MAX_MAGNITUDE].min # cap at MAX_MAGNITUDE
 
-        @gray_out_view[y][x] = gray(magnitude)
+        @pixel_out_values[y][x] = gray(magnitude)
       end
     end
     
     
-    @gray_out_view.sync
-    
+    @gray.store_pixels(0,0,@gray.columns,@gray.rows,@pixel_out_values.flatten)
     @gray.write(output_path)
   end
   
