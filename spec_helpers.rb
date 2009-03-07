@@ -5,11 +5,7 @@ class EqualImage
   
   def matches?(image)
     @image = image
-    return false unless @image.rows == @other_image.rows && 
-                        @image.columns == @other_image.columns
-                        
-    @image.get_pixels(0,0,@image.columns,@image.rows) ==
-      @other_image.get_pixels(0,0,@other_image.columns, @other_image.rows)
+    return (@other_image <=> @image) == 0
   end
   
   def failure_message
@@ -28,27 +24,27 @@ end
 require 'rubygems'
 require 'RMagick'
 
-class BlackImage
-  def self.image
+class Image
+  def self.black_image
     Magick::ImageList.new("images/black400x400.jpg")
   end
-  def self.other_image
-    Magick::ImageList.new("images/gray.jpg")
+  def self.white_image
+    Magick::ImageList.new("images/white400x400.jpg")
   end
 end
 
 require 'spec'
-describe BlackImage do
+describe Image do
   it "should do equals" do
-    img1 = BlackImage.image
-    img2 = BlackImage.image
+    img1 = Image.black_image
+    img2 = Image.black_image
     
     img1.should equal_image(img2)
   end
   
   it "should do equals" do
-    img1 = BlackImage.image
-    img2 = BlackImage.other_image
+    img1 = Image.black_image
+    img2 = Image.white_image
     
     img1.should_not equal_image(img2)
   end
