@@ -1,3 +1,5 @@
+require File.dirname(__FILE__) + "/lib"
+
 # Matcher to test equality between images
 class EqualImage
   def initialize(other_image)
