@@ -16,6 +16,10 @@ describe EdgeDetector do
     
     (@tmp_path + "/output.jpg").should equal_image(@fixtures_path + "/edge_output.jpg")
   end
+  
+  it "should only accept grayscale images for edge detection" do
+    lambda { EdgeDetector.new(@fixtures_path + "/color.jpg") }.should raise_error
+  end
 
   after(:all) do
     `rm -rf #{@tmp_path}`

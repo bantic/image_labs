@@ -7,12 +7,12 @@ class EdgeDetector
             [ 0,  0,  0],
             [-1, -1, -1]]
 
-  # get the value of the x-mask at i,j
+  MAX_MAGNITUDE = 255
+
   def x_mask(x_value, y_value)
     X_MASK[y_value + 1][x_value + 1]
   end
 
-  # get the value of the y-mask at i,j
   def y_mask(x_value, y_value)
     Y_MASK[y_value + 1][x_value + 1]
   end
@@ -20,6 +20,7 @@ class EdgeDetector
   # we assume the image is grayscale
   def initialize(image_path)
     @gray = img(image_path)
+    raise ArgumentError, "Image should be grayscale" unless @gray.gray?
   end
   
   def detect_edges!(output_path="prewitt_ruby_out.jpg")
@@ -49,7 +50,7 @@ class EdgeDetector
         end
 
         magnitude = xsum.abs + ysum.abs
-        magnitude = [magnitude, 255].min # cap at 255
+        magnitude = [magnitude, MAX_MAGNITUDE].min # cap at MAX_MAGNITUDE
 
         @gray_out_view[y][x] = Magick::Pixel.gray(magnitude)
       end
