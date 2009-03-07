@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+lib       = File.dirname(__FILE__) + '/../lib/lib'
+irb_name  = RUBY_PLATFORM =~ /mswin32/ ? 'irb.bat' : 'irb'
+ 
+exec "#{irb_name} -r #{lib} --simple-prompt"
