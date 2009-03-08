@@ -12,9 +12,10 @@ describe EdgeDetector do
   
   it "should create the correct output" do
     ed = EdgeDetector.new(@fixtures_path + "/cart_gray.jpg")
-    ed.detect_edges!(@tmp_path + "/output.jpg")
+    edges = ed.detect_edges
     
-    (@tmp_path + "/output.jpg").should equal_image(@fixtures_path + "/cart_edges.jpg")
+    edges.write(@tmp_path + "/edges-out.jpg")
+    (@tmp_path + "/edges-out.jpg").should equal_image(@fixtures_path + "/cart_edges.jpg")
   end
   
   it "should only accept grayscale images for edge detection" do

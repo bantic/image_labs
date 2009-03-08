@@ -23,8 +23,7 @@ class EdgeDetector
     raise ArgumentError, "Image should be grayscale" unless @img.gray?
   end
   
-  def detect_edges!(output_path="prewitt_ruby_out.jpg")
-    puts "Creating 2-d array"
+  def detect_edges
     @pixel_values     = @img.two_d_array
     @pixel_out_values = Array.two_d_array(@img.columns, @img.rows)
     
@@ -54,9 +53,9 @@ class EdgeDetector
       end
     end
     
-    
-    @img.store_pixels(0,0,@img.columns,@img.rows,@pixel_out_values.flatten)
-    @img.write(output_path)
+    edges = Image.new(@img.columns,@img.rows)
+    edges.store_pixels(0,0,@img.columns,@img.rows,@pixel_out_values.flatten)
+    edges
   end
   
 end
