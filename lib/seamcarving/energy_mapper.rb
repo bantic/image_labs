@@ -92,18 +92,23 @@ class EnergyMapper
   end
   
   def normalize_energy_map_to_pixels
-    @pixels_out = Array.two_d_array(@img.columns, @img.rows)
+    pixels_out = Array.two_d_array(@img.columns, @img.rows)
     max = @energy_map.flatten.max
     @img.y_range.each do |y|
       @img.x_range.each do |x|
-        @pixels_out[y][x] = Magick::Pixel.gray( ((@energy_map[y][x] / max.to_f) * 255).to_i )
+        pixels_out[y][x] = Magick::Pixel.gray( ((@energy_map[y][x] / max.to_f) * 255).to_i )
       end
     end
+    
+    pixels_out
   end
   
-  def write_normalized_image(output_path="output.jpg")
-    @img.store_pixels(0,0,@img.columns,@img.rows,@pixels_out.flatten)
-    @img.write(output_path)
+  def normalized_energy_map_image
+    pixels = normalize_energy_map_to_pixels
+    
+    energy_map_image = @img.dup
+    energy_map_image.store_pixels(0,0,@img.columns,@img.rows, pixels.flatten)
+    energy_map_image
   end
   
 end

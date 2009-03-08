@@ -13,11 +13,12 @@ describe EnergyMapper do
   it "should make the correct output" do
     em = EnergyMapper.new(@fixtures_path + "/cart_edges.jpg")
     em.populate_energy_map!
-    em.normalize_energy_map_to_pixels
-    em.write_normalized_image(@tmp_path + "/output.jpg")
-    (@tmp_path + "/output.jpg").should equal_image(@fixtures_path + "/cart_energy_map.jpg")
+
+    energy_map_image = em.normalized_energy_map_image
+    energy_map_image.write(@tmp_path + "/cart_energy_map.jpg")
+    (@tmp_path + "/cart_energy_map.jpg").should equal_image(@fixtures_path + "/cart_energy_map.jpg")
   end
-  
+
   it "should find the seam correctly" do
     em = EnergyMapper.new(@fixtures_path + "/cart_edges.jpg")
     img = img(@fixtures_path + "/cart_edges.jpg")

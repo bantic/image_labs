@@ -18,7 +18,8 @@ describe SeamCarver do
     0.upto(99) {|i| seam << [i,i]} # diagonal seam
 
     carved = SeamCarver.carve_column(img, seam)
-    carved.should equal_image(@fixtures_path + "/white100x99.gif")
+    carved.write(@tmp_path + "/white100x99.gif")
+    (@tmp_path + "/white100x99.gif").should equal_image(@fixtures_path + "/white100x99.gif")
   end
   
   after(:each) do
