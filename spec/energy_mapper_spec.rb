@@ -3,7 +3,7 @@ require 'spec'
 require 'fileutils'
 
 describe EnergyMapper do
-  before(:all) do
+  before do
     dirname = File.dirname(__FILE__)
     @fixtures_path = dirname + "/../fixtures"
     @tmp_path = dirname + "/tmp"
@@ -11,11 +11,12 @@ describe EnergyMapper do
   end
   
   it "should make the correct output" do
+    puts "tmp path: #{@tmp_path}"
     em = EnergyMapper.new(@fixtures_path + "/cart_edges.jpg")
     em.populate_energy_map!
     em.normalize_energy_map_to_pixels
-    em.write_normalized_image(@tmp_path + "/output.jpg")
-    (@tmp_path + "/output.jpg").should equal_image(@fixtures_path + "/cart_energy_map.jpg")
+    em.write_normalized_image("output.jpg")
+    ("output.jpg").should equal_image(@fixtures_path + "/cart_energy_map.jpg")
   end
   
   it "should find the seam correctly" do
@@ -24,7 +25,6 @@ describe EnergyMapper do
     
     seam = em.find_seam!
     img.manipulate_pixels(seam) {|pix| Pixel.new(255,0,0)}
-    img.write(@fixtures_path + "/red-output.jpg")
   end
   
   it "should populate the energy map correctly by math" do
@@ -43,9 +43,5 @@ describe EnergyMapper do
                   [2,3,0],
                   [3,2,1]]
     EnergyMapper.find_seam(energy_map).should == [[2,2],[2,1],[1,0]]
-  end
-  
-  after(:all) do
-    `rm -rf #{@tmp_path}`
   end
 end
