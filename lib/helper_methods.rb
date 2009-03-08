@@ -13,6 +13,22 @@ end
 
 class Magick::Image
   def two_d_array
+    two_d_array_with_export_pixels
+  end
+  
+  def two_d_array_with_export_pixels
+    _pixels = export_pixels(0,0,columns,rows,"R")
+    array = Array.two_d_array(columns, rows)
+    0.upto(columns - 1) do |x|
+      0.upto(rows - 1) do |y|
+        array[y][x] = _pixels[y*columns + x]
+      end
+    end
+    
+    array
+  end
+  
+  def two_d_array_with_view
     _view = view(0,0,columns,rows)
     array = Array.two_d_array(columns, rows)
     0.upto(columns - 1) do |x|

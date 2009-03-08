@@ -24,7 +24,9 @@ class EdgeDetector
   end
   
   def detect_edges!(output_path="prewitt_ruby_out.jpg")
+    puts "Creating 2-d array"
     @pixel_values     = @gray.two_d_array
+    
     @pixel_out_values = Array.two_d_array(@gray.columns, @gray.rows)
     
     right = @gray.columns - 1
