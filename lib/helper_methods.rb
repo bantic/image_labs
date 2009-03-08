@@ -12,6 +12,16 @@ class Array
 end
 
 class Magick::Image
+  # Do something to all the pixels specified in +locations_array+
+  # Locations_array is an array of [column,row] tuples
+  def manipulate_pixels(locations_array, &blck)
+    pixels = get_pixels(0,0,columns,rows)
+    locations_array.each do |column, row|
+      pixels[ column * rows + row ] = yield pixels[ column * rows + row ]
+    end
+    store_pixels(0,0,columns,rows,pixels)
+  end
+  
   def x_range
     (0..(columns - 1))
   end
