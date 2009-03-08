@@ -20,7 +20,7 @@ describe EdgeDetector do
   it "should only accept grayscale images for edge detection" do
     lambda { EdgeDetector.new(@fixtures_path + "/color.jpg") }.should raise_error
   end
-
+  
   after(:all) do
     `rm -rf #{@tmp_path}`
   end

@@ -12,6 +12,22 @@ class Array
 end
 
 class Magick::Image
+  def x_range
+    (0..(columns - 1))
+  end
+  
+  def y_range
+    (0..(rows - 1))
+  end
+  
+  def bottom
+    rows - 1
+  end
+  
+  def right
+    columns - 1
+  end
+  
   def two_d_array
     two_d_array_with_export_pixels
   end

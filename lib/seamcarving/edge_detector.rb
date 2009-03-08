@@ -19,25 +19,21 @@ class EdgeDetector
   
   # we assume the image is grayscale
   def initialize(image_path)
-    @gray = img(image_path)
-    raise ArgumentError, "Image should be grayscale" unless @gray.gray?
+    @img = img(image_path)
+    raise ArgumentError, "Image should be grayscale" unless @img.gray?
   end
   
   def detect_edges!(output_path="prewitt_ruby_out.jpg")
     puts "Creating 2-d array"
-    @pixel_values     = @gray.two_d_array
+    @pixel_values     = @img.two_d_array
+    @pixel_out_values = Array.two_d_array(@img.columns, @img.rows)
     
-    @pixel_out_values = Array.two_d_array(@gray.columns, @gray.rows)
-    
-    right = @gray.columns - 1
-    bottom = @gray.rows - 1
-
-    0.upto( right ) do |x|
-      0.upto( bottom ) do |y|
+    @img.x_range.each do |x|
+      @img.y_range.each do |y|
 
         magnitude = xsum = ysum = 0
 
-        if x == 0 || y == 0 || x == right || y == bottom
+        if x == 0 || y == 0 || x == @img.right || y == @img.bottom
           magnitude = 0
         else
           # for the 8 surrounding pixels to x,y, apply the filter value and add to the xsum
@@ -54,13 +50,13 @@ class EdgeDetector
         magnitude = xsum.abs + ysum.abs
         magnitude = [magnitude, MAX_MAGNITUDE].min # cap at MAX_MAGNITUDE
 
-        @pixel_out_values[y][x] = gray(magnitude)
+        @pixel_out_values[y][x] = Magick::Pixel.gray(magnitude)
       end
     end
     
     
-    @gray.store_pixels(0,0,@gray.columns,@gray.rows,@pixel_out_values.flatten)
-    @gray.write(output_path)
+    @img.store_pixels(0,0,@img.columns,@img.rows,@pixel_out_values.flatten)
+    @img.write(output_path)
   end
   
 end
