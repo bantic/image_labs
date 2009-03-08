@@ -17,7 +17,7 @@ class Magick::Image
   def manipulate_pixels(locations_array, &blck)
     pixels = get_pixels(0,0,columns,rows)
     locations_array.each do |column, row|
-      pixels[ column * rows + row ] = yield pixels[ column * rows + row ]
+      pixels[ row * columns + column ] = yield pixels[ row * columns + column ]
     end
     store_pixels(0,0,columns,rows,pixels)
   end

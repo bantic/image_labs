@@ -85,7 +85,7 @@ class EnergyMapper
           min_pos = energy_map[row_num][min_pos - 1, 3].index(min_val) - 1 + min_pos
         end
       end
-      @seam << [row_num, min_pos]
+      @seam << [min_pos, row_num]
     end
     
     @seam

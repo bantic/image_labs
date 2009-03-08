@@ -18,7 +18,16 @@ describe EnergyMapper do
     (@tmp_path + "/output.jpg").should equal_image(@fixtures_path + "/cart_energy_map.jpg")
   end
   
-  it "should populate the energy map correctly" do
+  it "should find the seam correctly" do
+    em = EnergyMapper.new(@fixtures_path + "/cart_edges.jpg")
+    img = img(@fixtures_path + "/cart_edges.jpg")
+    
+    seam = em.find_seam!
+    img.manipulate_pixels(seam) {|pix| Pixel.new(255,0,0)}
+    img.write(@fixtures_path + "/red-output.jpg")
+  end
+  
+  it "should populate the energy map correctly by math" do
     image_array = [[1,2,3],
                    [1,0,1],
                    [2,1,0]]
@@ -29,11 +38,11 @@ describe EnergyMapper do
     EnergyMapper.populate_energy_map(image_array).should == energy_map
   end
   
-  it "should find a seam correctly" do
+  it "should find a seam correctly by math" do
     energy_map = [[1,2,3],
-                  [2,1,3],
+                  [2,3,0],
                   [3,2,1]]
-    EnergyMapper.find_seam(energy_map).should == [[2,2],[1,1],[0,0]]
+    EnergyMapper.find_seam(energy_map).should == [[2,2],[2,1],[1,0]]
   end
   
   after(:all) do

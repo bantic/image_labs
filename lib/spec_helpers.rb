@@ -9,8 +9,10 @@ class EqualImage
   def load_image(image)
     case image
     when String
-      Magick::ImageList.new(image)
-    else
+      Magick::ImageList.new(image).first
+    when Magick::ImageList
+      image.first
+    when Magick::Image
       image
     end
   end
