@@ -94,7 +94,6 @@ class EnergyMapper
   def normalize_energy_map_to_pixels
     @pixels_out = Array.two_d_array(@img.columns, @img.rows)
     max = @energy_map.flatten.max
-    puts "copying normalized values into view max #{max}"
     @img.y_range.each do |y|
       @img.x_range.each do |x|
         @pixels_out[y][x] = Magick::Pixel.gray( ((@energy_map[y][x] / max.to_f) * 255).to_i )
