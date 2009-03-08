@@ -17,7 +17,19 @@ class Magick::Image
   end
   
   def two_d_array_with_export_pixels
-    _pixels = export_pixels(0,0,columns,rows,"R")
+    _pixels = export_pixels(0,0,columns,rows,"I")
+    array = Array.two_d_array(columns, rows)
+    0.upto(columns - 1) do |x|
+      0.upto(rows - 1) do |y|
+        array[y][x] = _pixels[y*columns + x]
+      end
+    end
+    
+    array
+  end
+  
+  def two_d_array_with_dispatch
+    _pixels = dispatch(0,0,columns,rows,"I")
     array = Array.two_d_array(columns, rows)
     0.upto(columns - 1) do |x|
       0.upto(rows - 1) do |y|
