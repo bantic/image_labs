@@ -1,17 +1,28 @@
 class SeamCarver
+  attr_accessor :base_img
+  
   def initialize(img_path)
-    @img = img(img_path)
+    @base_img = img(img_path)
     
-    if @img.gray?
-      @gray_img = @img.dup
+    if @base_img.gray?
+      @gray_img = @base_img.dup
     else
-      @gray_img = @img.quantize(256, Magick::GRAYColorspace)
+      @gray_img = @base_img.quantize(256, Magick::GRAYColorspace)
     end
   end
   
   def carve_seam!
     puts "Finding edges"
-    # @edge_img = Edg
+    @edge_img = EdgeDetector.new(@gray_img).detect_edges
+    
+    puts "Creating energy map"
+    em = EnergyMapper.new(@edge_img)
+    em.populate_energy_map!
+    
+    puts "Finding seam"
+    seam = em.find_seam!
+    
+    @base_img.manipulate_pixels(seam) {|pix| Pixel.new(255 - pix.red, 255 - pix.green, 255 - pix.blue)}
   end
   
   def self.carve_column(img, seam)

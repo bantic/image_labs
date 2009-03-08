@@ -1,4 +1,6 @@
 class EdgeDetector
+  
+  # Use Prewitt Edge Detection
   X_MASK = [[-1, 0, 1],
             [-1, 0, 1],
             [-1, 0, 1]]
@@ -18,14 +20,20 @@ class EdgeDetector
   end
   
   # we assume the image is grayscale
-  def initialize(image_path)
-    @img = img(image_path)
+  def initialize(img_path_or_img)
+    @img = case img_path_or_img
+    when String
+      img(img_path_or_img)
+    else
+      img_path_or_img
+    end
+    
     raise ArgumentError, "Image should be grayscale" unless @img.gray?
   end
   
   def detect_edges
-    @pixel_values     = @img.two_d_array
-    @pixel_out_values = Array.two_d_array(@img.columns, @img.rows)
+    pixel_values     = @img.two_d_array
+    pixel_out_values = Array.two_d_array(@img.columns, @img.rows)
     
     @img.x_range.each do |x|
       @img.y_range.each do |y|
@@ -40,8 +48,8 @@ class EdgeDetector
             [-1,0,1].each do |j|
               # can use .red since all pixel values are the same since we are grayscale
               # note that we have to invert j and i in the x_mask and y_mask calls
-              xsum += @pixel_values[y + j][x + i] * x_mask(i,j)
-              ysum += @pixel_values[y + j][x + i] * y_mask(i,j)
+              xsum += pixel_values[y + j][x + i] * x_mask(i,j)
+              ysum += pixel_values[y + j][x + i] * y_mask(i,j)
             end
           end
         end
@@ -49,12 +57,12 @@ class EdgeDetector
         magnitude = xsum.abs + ysum.abs
         magnitude = [magnitude, MAX_MAGNITUDE].min # cap at MAX_MAGNITUDE
 
-        @pixel_out_values[y][x] = Magick::Pixel.gray(magnitude)
+        pixel_out_values[y][x] = Magick::Pixel.gray(magnitude)
       end
     end
     
     edges = Image.new(@img.columns,@img.rows)
-    edges.store_pixels(0,0,@img.columns,@img.rows,@pixel_out_values.flatten)
+    edges.store_pixels(0,0,@img.columns,@img.rows,pixel_out_values.flatten)
     edges
   end
   

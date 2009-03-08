@@ -1,17 +1,25 @@
 class EnergyMapper
   attr_accessor :energy_map
   
-  def initialize(img_path)
-    @img          = img(img_path)
+  def initialize(img_path_or_img)
+    @img = case img_path_or_img
+    when String
+      img(img_path_or_img)
+    else
+      img_path_or_img
+    end
+
     @img_array    = @img.two_d_array
   end
   
   def find_seam!
-    populate_energy_map!
+    puts "EM:find_seam!"
+    populate_energy_map! unless @energy_map
     @seam = EnergyMapper.find_seam(@energy_map)
   end
   
   def populate_energy_map!
+    puts "EM:populate_energy_map!"
     @energy_map = EnergyMapper.populate_energy_map(@img_array)
   end
   
