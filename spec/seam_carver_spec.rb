@@ -11,11 +11,11 @@ describe SeamCarver do
     FileUtils.mkdir_p(@tmp_path)
   end
   
-  it "should carve a seam from an image" do
+  it "should carve a seam with the second method" do
     img = img(@fixtures_path + "/white100x100-red-diagonal-line.gif")
     
     seam = []
-    0.upto(99) {|i| seam << [i,i]} # diagonal seam
+    0.upto(99) {|i| seam << [99-i,99-i]} # diagonal seam
 
     carved = SeamCarver.carve_column(img, seam)
     carved.write(@tmp_path + "/white100x99.gif")
