@@ -9,7 +9,13 @@ class EdgeDetector
             [ 0,  0,  0],
             [-1, -1, -1]]
 
-  MAX_MAGNITUDE = 255
+  MAX_MAGNITUDE = begin
+    QuantumRange
+  rescue => e
+    MaxRGB
+  rescue => e
+    255
+  end
 
   def x_mask(x_value, y_value)
     X_MASK[y_value + 1][x_value + 1]
@@ -46,7 +52,7 @@ class EdgeDetector
         magnitude = xsum = ysum = 0
 
         if x == 0 || y == 0 || x == @img.right || y == @img.bottom
-          magnitude = 0
+          magnitude = MAX_MAGNITUDE
         else
           # for the 8 surrounding pixels to x,y, apply the filter value and add to the xsum
           [-1,0,1].each do |i|
@@ -57,11 +63,11 @@ class EdgeDetector
               ysum += pixel_values[y + j][x + i] * y_mask(i,j)
             end
           end
+          
+          magnitude = xsum.abs + ysum.abs
         end
 
-        magnitude = xsum.abs + ysum.abs
         magnitude = [magnitude, MAX_MAGNITUDE].min # cap at MAX_MAGNITUDE
-
         pixel_out_values[y][x] = Magick::Pixel.gray(magnitude)
       end
     end
