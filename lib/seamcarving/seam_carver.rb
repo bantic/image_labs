@@ -13,11 +13,11 @@ class SeamCarver
     end
   end
   
-  def self.create_animation(base_img_path, redlines_path="redlines", carves_path="carves")
+  def self.create_animation(base_img_path, frames=50, redlines_path="redlines", carves_path="carves")
     FileUtils.mkdir_p(redlines_path)
     FileUtils.mkdir_p(carves_path)
     
-    1.upto(50) do |idx|
+    1.upto(frames) do |idx|
       puts "#{idx}: #{base_img_path}"
       sc = SeamCarver.new(base_img_path)
       seam = sc.find_seam!
