@@ -13,13 +13,11 @@ class EnergyMapper
   end
   
   def find_seam!
-    puts "EM:find_seam!"
     populate_energy_map! unless @energy_map
     @seam = EnergyMapper.find_seam(@energy_map)
   end
   
   def populate_energy_map!
-    puts "EM:populate_energy_map!"
     @energy_map = EnergyMapper.populate_energy_map(@img_array)
   end
   

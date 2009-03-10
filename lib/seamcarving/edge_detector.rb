@@ -31,6 +31,11 @@ class EdgeDetector
     raise ArgumentError, "Image should be grayscale" unless @img.gray?
   end
   
+  def detect_edges_fast
+    edges = @img.edge
+    return edges
+  end
+  
   def detect_edges
     pixel_values     = @img.two_d_array
     pixel_out_values = Array.two_d_array(@img.columns, @img.rows)
