@@ -15,23 +15,31 @@ class SeamCarver
     1.upto(50) do |idx|
       puts "#{idx}: #{base_img_path}"
       sc = SeamCarver.new(base_img_path)
+      
+      edge_img = sc.find_edge_img
+      edge_img.write("edges/#{idx}.png")
+      
       seam = sc.find_seam!
       sc.base_img.manipulate_pixels(seam) {|p| Pixel.new(255,0,0)}
       
       puts "Writing redlines"
-      sc.base_img.write("redlines/#{idx}.jpg")
+      sc.base_img.write("redlines/#{idx}.png")
       
       puts "Writing carved"
       carved = SeamCarver.carve_column(img(base_img_path),seam)
-      carved.write("carves/#{idx}.jpg")
+      carved.write("carves/#{idx}.png")
       
-      base_img_path = "carves/#{idx}.jpg"
+      base_img_path = "carves/#{idx}.png"
     end
   end
   
-  def find_seam!
+  def find_edge_img
     puts "Finding edges"
-    edge_img = EdgeDetector.new(@gray_img).detect_edges
+    @edge_img ||= EdgeDetector.new(@gray_img).detect_edges
+  end
+  
+  def find_seam!
+    edge_img = find_edge_img
     
     puts "Creating energy map"
     em = EnergyMapper.new(edge_img)
