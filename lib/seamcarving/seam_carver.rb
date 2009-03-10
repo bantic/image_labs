@@ -11,15 +11,15 @@ class SeamCarver
     end
   end
   
-  def self.create_animation(base_img_path)
-    1.upto(50) do |idx|
+  def self.create_animation(base_img_path, frames=50)
+    1.upto(frames) do |idx|
       puts "#{idx}: #{base_img_path}"
       sc = SeamCarver.new(base_img_path)
       
       edge_img = sc.find_edge_img
       edge_img.write("edges/#{idx}.png")
       
-      seam = sc.find_seam!
+      seam = sc.find_seam!(idx)
       sc.base_img.manipulate_pixels(seam) {|p| Pixel.new(255,0,0)}
       
       puts "Writing redlines"
@@ -38,12 +38,14 @@ class SeamCarver
     @edge_img ||= EdgeDetector.new(@gray_img).detect_edges
   end
   
-  def find_seam!
+  def find_seam!(idx=nil)
     edge_img = find_edge_img
+    edge_img.write("edges/#{idx}.png")
     
     puts "Creating energy map"
     em = EnergyMapper.new(edge_img)
     em.populate_energy_map!
+    em.write_normalized_energy_map("energy/#{idx}.png")
     
     puts "Finding seam"
     seam = em.find_seam!
