@@ -13,9 +13,11 @@ class SeamCarver
     end
   end
   
-  def self.create_animation(base_img_path, frames=50, redlines_path="redlines", carves_path="carves")
+  def self.create_animation(base_img_path, frames=50, redlines_path="redlines", carves_path="carves", edges_path="edges", energy_path="energy")
     FileUtils.mkdir_p(redlines_path)
     FileUtils.mkdir_p(carves_path)
+    FileUtils.mkdir_p(edges_path)
+    FileUtils.mkdir_p(energy_path)
     
     1.upto(frames) do |idx|
       puts "#{idx}: #{base_img_path}"
@@ -28,13 +30,13 @@ class SeamCarver
       sc.base_img.manipulate_pixels(seam) {|p| Pixel.new(255,0,0)}
       
       puts "Writing redlines"
-      sc.base_img.write(redlines_path + "/#{idx}.jpg")
+      sc.base_img.write(redlines_path + "/#{idx}.png")
       
       puts "Writing carved"
       carved = SeamCarver.carve_column(img(base_img_path),seam)
-      carved.write(carves_path + "/#{idx}.jpg")
+      carved.write(carves_path + "/#{idx}.png")
       
-      base_img_path = carves_path + "/#{idx}.jpg"
+      base_img_path = carves_path + "/#{idx}.png"
     end
   end
   

@@ -14,8 +14,8 @@ describe EnergyMapper do
     em = EnergyMapper.new(@fixtures_path + "/cart_edges.jpg")
     em.populate_energy_map!
 
-    energy_map_image = em.normalized_energy_map_image
-    energy_map_image.write(@tmp_path + "/cart_energy_map.jpg")
+    em.write_normalized_energy_map(@tmp_path + "/cart_energy_map.jpg")
+    em.write_normalized_energy_map("cart_energy_map.jpg")
     (@tmp_path + "/cart_energy_map.jpg").should equal_image(@fixtures_path + "/cart_energy_map.jpg")
   end
 
