@@ -28,11 +28,14 @@ class Gene
     }
   end
   
-  def magick_draw_obj
+  # draw yourself onto the given image
+  def render(img)
     pheno = phenotype
     d = Draw.new
     d.fill("rgba(#{pheno[:r]},#{pheno[:g]},#{pheno[:b]},#{pheno[:a]}")
     d.ellipse(pheno[:x],pheno[:y],pheno[:w],pheno[:h],0,360)
+    d.draw(img)
+    img
   end
   
   def mutate!(mutation_rate=DEFAULT_MUTATION_RATE)
