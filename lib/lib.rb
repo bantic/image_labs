@@ -4,9 +4,19 @@ include Magick
 
 require File.dirname(__FILE__) + "/helper_methods"
 
-require File.dirname(__FILE__) + "/seamcarving/edge_detector"
-require File.dirname(__FILE__) + "/seamcarving/grayscaler"
-require File.dirname(__FILE__) + "/seamcarving/energy_mapper"
-require File.dirname(__FILE__) + "/seamcarving/seam_carver"
+# SeamCarver
+require File.dirname(__FILE__) + "/seamcarver/edge_detector"
+require File.dirname(__FILE__) + "/seamcarver/grayscaler"
+require File.dirname(__FILE__) + "/seamcarver/energy_mapper"
+require File.dirname(__FILE__) + "/seamcarver/seam_carver"
 
-require File.dirname(__FILE__) + "/metacompositing/meta_compositer"
+# Mosaicer
+require File.dirname(__FILE__) + "/mosaicer/mosaicer"
+
+# ImageEvolution
+require File.dirname(__FILE__) + "/evolution/chromosome"
+require File.dirname(__FILE__) + "/evolution/gene"
+require File.dirname(__FILE__) + "/evolution/gene_pool"
+
+# ImageBlender
+require File.dirname(__FILE__) + "/blender/blender"

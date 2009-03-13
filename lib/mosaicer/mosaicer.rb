@@ -1,8 +1,8 @@
 require 'fileutils'
 
-class MetaCompositer
+class Mosaicer
   # Usage:
-  # mc = MetaCompositer.new("dir_filled_with_images", 60, 60, 15, 10, true)
+  # mc = Mosaicer.new("dir_filled_with_images", 60, 60, 15, 10, true)
   # mosaic = mc.create_mosaic
   # mosaic.write("mosaic.jpg")
   def initialize(input_dir, image_width, image_height, columns, padding=0, full_rows_only=false)
