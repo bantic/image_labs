@@ -56,6 +56,7 @@ class Magick::Image
   
   # Returns a two-d array of pixel grayscale values
   def two_d_array
+    Kernel.raise ArgumentError, "Only call two_d_array on a grayscale image" unless gray?
     two_d_array_with_export_pixels
   end
   

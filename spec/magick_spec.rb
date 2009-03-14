@@ -25,4 +25,19 @@ describe Magick::Image do
                                            white_pixel, white_pixel, white_pixel]
     end
   end
+  
+  describe "#two_d_array" do
+    it "should return a 2-d array of grayscale values from the image" do
+      white = img(@fixtures_path + "/white3x3.png")
+      
+      white.two_d_array.should == [[255,255,255],[255,255,255],[255,255,255]]
+    end
+    
+    it "should only be called on a grayscale image" do
+      color = img(@fixtures_path + "/color.jpg")
+      lambda {
+        color.two_d_array
+      }.should raise_error(ArgumentError)
+    end
+  end
 end
