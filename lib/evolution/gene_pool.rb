@@ -5,7 +5,7 @@ class GenePool
   
   attr_accessor :chromosomes, :generation
   DEFAULT_POPULATION_SIZE = 10
-  DEFAULT_GENES_PER_CHROMOSOME = 30
+  DEFAULT_GENES_PER_CHROMOSOME = 50
 
   def initialize(pop_size=DEFAULT_POPULATION_SIZE, genes_per_chromosome=DEFAULT_GENES_PER_CHROMOSOME)
     @generation  = 1
@@ -15,7 +15,7 @@ class GenePool
     @pop_size.times { @chromosomes << Chromosome.new(@genes_per_chromosome) }
   end
 
-  def evolve!(mutation_rate=0.2, cross_rate=0.7)
+  def evolve!(mutation_rate=0.02, cross_rate=0.02)
     @chromosomes.sort!
     
     new_chromosomes = []
