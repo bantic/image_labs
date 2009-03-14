@@ -4,7 +4,7 @@ class Gene
   MAX_POS   = 200
   MAX_DIM   = 200
 
-  DEFAULT_MUTATION_RATE = 0.2
+  DEFAULT_MUTATION_RATE = 0.05
 
   ATTRS = [:r, :g, :b, :a, :x, :y, :w, :h]
 
@@ -40,7 +40,9 @@ class Gene
   
   def mutate!(mutation_rate=DEFAULT_MUTATION_RATE)
     @genotype.each_key do |attribute|
-      @genotype[attribute] = rand if rand < DEFAULT_MUTATION_RATE
+      if rand < mutation_rate
+        @genotype[attribute] = rand 
+      end
     end
   end
 end

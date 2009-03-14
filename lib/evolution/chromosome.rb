@@ -41,13 +41,12 @@ class Chromosome
     @genes.each {|gene| gene.mutate!(mutation_rate)}
     
     # swap genes, possibly
-    if rand < mutation_rate
-      first_pos = rand(@genes.size)
-      second_pos = rand(@genes.size)
-      
-      @genes[first_pos], @genes[second_pos] = @genes[second_pos], @genes[first_pos]
-    end
-    @fitness = nil #reset fitness
+    # if rand < mutation_rate
+    #   first_pos = rand(@genes.size)
+    #   second_pos = rand(@genes.size)
+    #   
+    #   @genes[first_pos], @genes[second_pos] = @genes[second_pos], @genes[first_pos]
+    # end
   end
   
   # lower fitness is better
@@ -56,7 +55,7 @@ class Chromosome
   end
   
   def fitness
-    @fitness ||= Chromosome.mona_lisa.difference(render)[2]
+    Chromosome.mona_lisa.difference(render)[1]
   end
   
 end
