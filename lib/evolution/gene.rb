@@ -1,4 +1,5 @@
 class Gene
+  attr_accessor :genotype
   MAX_RGB   = 255
   MAX_ALPHA = 1.0
   MAX_POS   = 200
@@ -10,8 +11,12 @@ class Gene
 
   def initialize
     @genotype = {}
-    ATTRS.each do |key|
-      @genotype[key] = rand
+    if block_given?
+      yield self
+    else
+      ATTRS.each do |key|
+        @genotype[key] = rand
+      end
     end
   end
   
@@ -26,6 +31,12 @@ class Gene
      :w => (@genotype[:w] * MAX_DIM).to_i,
      :h => (@genotype[:h] * MAX_DIM).to_i
     }
+  end
+  
+  def dup
+    Gene.new do |gene|
+      gene.genotype = @genotype.dup
+    end
   end
   
   # draw yourself onto the given image

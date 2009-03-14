@@ -15,10 +15,20 @@ class Chromosome
     end
   end
   
-  def self.crossover(mom, dad, cross_point)
-    self.new(mom.genes.size) do |chromosome|
+  def self.crossover(mom, dad, cross_rate)
+    cross_point = rand < cross_rate ? rand(mom.genes.size) : 0
+    
+    Chromosome.new(mom.genes.size) do |c|
       0.upto(mom.genes.size - 1) do |idx|
-        chromosome.genes << (idx < cross_point ? mom.genes[idx] : dad.genes[idx])
+        c.genes << (idx < cross_point ? mom.genes[idx].dup : dad.genes[idx].dup)
+      end
+    end
+  end
+  
+  def dup
+    Chromosome.new do |c|
+      @genes.each do |gene|
+        c.genes << gene.dup
       end
     end
   end
@@ -36,17 +46,21 @@ class Chromosome
     img
   end
   
-  def mutate!(mutation_rate)
-    # mutate each gene
-    @genes.each {|gene| gene.mutate!(mutation_rate)}
-    
-    # swap genes, possibly
-    # if rand < mutation_rate
-    #   first_pos = rand(@genes.size)
-    #   second_pos = rand(@genes.size)
-    #   
-    #   @genes[first_pos], @genes[second_pos] = @genes[second_pos], @genes[first_pos]
-    # end
+  def mutate(mutation_rate)
+    Chromosome.new do |c|
+      @genes.each do |gene|
+        gene.mutate!(mutation_rate)
+        c.genes << gene.dup
+      end
+      
+      # swap genes, possibly
+      if rand < mutation_rate
+        first_pos = rand(c.genes.size)
+        second_pos = rand(c.genes.size)
+
+        c.genes[first_pos], c.genes[second_pos] = c.genes[second_pos], c.genes[first_pos]
+      end
+    end
   end
   
   # lower fitness is better
@@ -55,7 +69,7 @@ class Chromosome
   end
   
   def fitness
-    Chromosome.mona_lisa.difference(render)[1]
+    @fitness ||= Chromosome.mona_lisa.difference(render)[1]
   end
   
 end
