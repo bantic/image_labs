@@ -22,6 +22,22 @@ class Magick::Image
     store_pixels(0,0,columns,rows,pixels)
   end
   
+  def manipulate_pixels_with_get_pixels(locations_array, &blck)
+    pixels = get_pixels(0,0,columns,rows)
+    locations_array.each do |column, row|
+      pixels[ row * columns + column ] = yield pixels[ row * columns + column ]
+    end
+    store_pixels(0,0,columns,rows,pixels)
+  end
+  
+  # def manipulate_pixels_with_export_pixels(locations_array, &blck)
+  #   pixels = import_pixels(0,0,columns,rows,"RGB")
+  #   locations_array.each do |column, row|
+  #     new_pixel = yield pixels[]
+  #     pixels[ 3 * (row*columns + column), 3 ] 
+  #   end
+  # end
+  
   def x_range
     (0..(columns - 1))
   end
@@ -38,10 +54,12 @@ class Magick::Image
     columns - 1
   end
   
+  # Returns a two-d array of pixel grayscale values
   def two_d_array
     two_d_array_with_export_pixels
   end
   
+  # Returns the actual two-d array of pixels themselves
   def two_d_array_of_pixels
     _pixels = get_pixels(0,0,columns,rows)
     array = Array.two_d_array(columns, rows)
@@ -55,7 +73,7 @@ class Magick::Image
   end
   
   def two_d_array_with_export_pixels
-    _pixels = export_pixels(0,0,columns,rows,"I")
+    _pixels = export_pixels(0, 0, columns, rows, "I")
     array = Array.two_d_array(columns, rows)
     0.upto(columns - 1) do |x|
       0.upto(rows - 1) do |y|

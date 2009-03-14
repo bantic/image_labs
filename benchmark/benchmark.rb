@@ -10,6 +10,12 @@ Benchmark.bm do |x|
   x.report("two_d_array_with_dispatch") { n.times do; ar = img.two_d_array_with_dispatch; end }
 end
 
+#
+# view
+# export pixels
+# 
+#
+
 # Results
 #
 #       user     system      total        real
