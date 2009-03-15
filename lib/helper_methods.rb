@@ -101,6 +101,21 @@ class Magick::Image
     Kernel.raise ArgumentError, "Only call two_d_array on a grayscale image" unless gray?
     two_d_array_with_export_pixels
   end
+  
+  def all_pixels(as_pixels=true)
+    if as_pixels
+      get_pixels(0,0,columns,rows)
+    else # as arrays of 0-255 ints
+      single_array = export_pixels(0,0,columns,rows,"RGB")
+      array_of_pixel_arrays = []
+      single_array.each_slice(3) { |slice| array_of_pixel_arrays << slice }
+      array_of_pixel_arrays
+    end
+  end
+  
+  def all_pixels_as_arrays
+    all_pixels(false)
+  end
 
   def two_d_array_with_export_pixels
     _pixels = export_pixels(0, 0, columns, rows, "I")

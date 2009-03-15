@@ -20,7 +20,7 @@ describe Magick::Image do
         red_pixel
       end
       
-      white.get_pixels(0,0,3,3).should == [red_pixel, red_pixel, red_pixel,
+      white.all_pixels.should == [red_pixel, red_pixel, red_pixel,
                                            white_pixel, white_pixel, white_pixel,
                                            white_pixel, white_pixel, white_pixel]
       
@@ -29,7 +29,7 @@ describe Magick::Image do
         red_pixel
       end
       
-      white.get_pixels(0,0,3,3).should == [red_pixel, red_pixel, red_pixel,
+      white.all_pixels.should == [red_pixel, red_pixel, red_pixel,
                                            red_pixel, white_pixel, white_pixel,
                                            red_pixel, white_pixel, white_pixel]
     end
