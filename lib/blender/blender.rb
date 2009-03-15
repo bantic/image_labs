@@ -1,6 +1,6 @@
 class Blender
   
-  # adds values in each channel, limiting to 255a
+  # adds values in each channel, limiting to 255
   def self.add(base, blend)
     self.blend_images(base, blend) do |pixel_base, pixel_blend|
       red     = [pixel_base.red + pixel_blend.red, 255].min
