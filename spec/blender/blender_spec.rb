@@ -47,12 +47,14 @@ describe Blender do
   
   describe "#difference" do
     it "should work correctly" do
+      # build the base image
       image1_pixels = [@white_pixel, @white_pixel, @white_pixel,
                        @white_pixel, @black_pixel, @white_pixel,
                        @white_pixel, @white_pixel, @white_pixel]
       image1 = Image.new(3,3)
       image1.store_pixels(0,0,3,3,image1_pixels)
       blended = Blender.difference(image1, @white_3x3)
+      
       blended.all_pixels.should == [@black_pixel, @black_pixel, @black_pixel,
                                     @black_pixel, @white_pixel, @black_pixel,
                                     @black_pixel, @black_pixel, @black_pixel]
