@@ -19,14 +19,14 @@ class Mosaicer
     FileUtils.mkdir_p(tmp_dir)
     
     # Make all images the same size and put a border on them
-    MetaCompositer.rectify_images(@input_dir, tmp_dir) do |img|
+    Mosaicer.rectify_images(@input_dir, tmp_dir) do |img|
       img = img.crop_resized(@image_width, @image_height)
       img = img.border(1,1,"black")
     end
     
     source_images = ImageList.new(*Dir.glob("/tmp/mc-tmp/*"))
     mosaic = 
-      MetaCompositer.tile_images(source_images, 
+      Mosaicer.tile_images(source_images, 
                                  @columns,
                                  @padding, 
                                  @full_rows_only)

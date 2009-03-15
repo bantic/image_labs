@@ -7,6 +7,16 @@ describe Magick::Image do
     @fixtures_path = dirname + "/../fixtures"
   end
   
+  describe "#intensity" do
+    it "should calculate intensity of a white image correctly" do
+      white_img = img(@fixtures_path + "/white3x3.png")
+      white_img.intensity.should == 255
+    end
+    it "should calculate intensity of a black image correctly" do
+      black_img = img(@fixtures_path + "/black400x400.jpg")
+      black_img.intensity.should == 0
+    end
+  end
   
   describe "#manipulate_pixels" do
     it "should change the specified pixels" do

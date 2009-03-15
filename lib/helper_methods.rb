@@ -1,7 +1,7 @@
 # Add the #two_d_array extension to Array class for convenience
 class Array
   def self.two_d_array(columns, rows)
-    self.new(rows) {self.new(columns)}
+    self.new(columns) {self.new(rows)}
   end
 end
 
@@ -39,6 +39,12 @@ class Magick::Image
   
   def right
     columns - 1
+  end
+  
+  # the intensity of this image
+  def intensity
+    total_intensity = export_pixels(0,0,columns,rows,"I").inject(0) {|sum,intensity| sum += intensity}
+    total_intensity / (columns * rows)
   end
   ############
   
@@ -117,6 +123,7 @@ class Magick::Image
     all_pixels(false)
   end
   
+  # returns an array of [r,g,b] arrays
   def export_pixels_as_arrays(x,y,w,h)
     single_array = export_pixels(x,y,w,h,"RGB")
     array_of_pixel_arrays = []
@@ -140,9 +147,9 @@ class Magick::Image
   def two_d_array_of_pixels
     _pixels = get_pixels(0,0,columns,rows)
     array = Array.two_d_array(columns, rows)
-    0.upto(columns - 1) do |x|
-      0.upto(rows - 1) do |y|
-        array[y][x] = _pixels[y*columns + x]
+    0.upto(columns - 1) do |column|
+      0.upto(rows - 1) do |row|
+        array[column][row] = _pixels[row*columns + column]
       end
     end
     
