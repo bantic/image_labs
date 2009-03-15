@@ -116,6 +116,13 @@ class Magick::Image
   def all_pixels_as_arrays
     all_pixels(false)
   end
+  
+  def export_pixels_as_arrays(x,y,w,h)
+    single_array = export_pixels(x,y,w,h,"RGB")
+    array_of_pixel_arrays = []
+    single_array.each_slice(3) { |slice| array_of_pixel_arrays << slice }
+    array_of_pixel_arrays
+  end
 
   def two_d_array_with_export_pixels
     _pixels = export_pixels(0, 0, columns, rows, "I")
