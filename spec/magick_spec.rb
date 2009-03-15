@@ -15,7 +15,7 @@ describe Magick::Image do
       red_pixel = Pixel.new(255,0,0)
       white_pixel = Pixel.new(255,255,255)
       
-      # change top row only
+      # change first row only
       white.manipulate_pixels([[0,0],[1,0],[2,0]]) do |pixel|
         red_pixel
       end
@@ -23,6 +23,15 @@ describe Magick::Image do
       white.get_pixels(0,0,3,3).should == [red_pixel, red_pixel, red_pixel,
                                            white_pixel, white_pixel, white_pixel,
                                            white_pixel, white_pixel, white_pixel]
+      
+      # now change first column
+      white.manipulate_pixels([[0,0],[0,1],[0,2]]) do |pixel|
+        red_pixel
+      end
+      
+      white.get_pixels(0,0,3,3).should == [red_pixel, red_pixel, red_pixel,
+                                           red_pixel, white_pixel, white_pixel,
+                                           red_pixel, white_pixel, white_pixel]
     end
   end
   
