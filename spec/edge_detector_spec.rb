@@ -15,7 +15,6 @@ describe EdgeDetector do
     edges = ed.detect_edges
     
     edges.write(@tmp_path + "/edges-out.jpg")
-    edges.write("edges-out.jpg")
     (@tmp_path + "/edges-out.jpg").should equal_image(@fixtures_path + "/cart_edges.jpg")
   end
   

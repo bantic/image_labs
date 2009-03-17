@@ -52,7 +52,6 @@ describe SeamCarver do
 
     carved = SeamCarver.carve_column(img, seam)
     carved.write(@tmp_path + "/white100x99.gif")
-    carved.write("out.gif")
     (@tmp_path + "/white100x99.gif").should equal_image(@fixtures_path + "/white99x99.gif")
   end
 

@@ -15,7 +15,6 @@ describe EnergyMapper do
     em.populate_energy_map!
 
     em.write_normalized_energy_map(@tmp_path + "/cart_energy_map.jpg")
-    em.write_normalized_energy_map("cart_energy_map.jpg")
     (@tmp_path + "/cart_energy_map.jpg").should equal_image(@fixtures_path + "/cart_energy_map.jpg")
   end
 
