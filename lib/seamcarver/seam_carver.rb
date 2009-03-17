@@ -62,12 +62,24 @@ class SeamCarver
     columns = img.columns
     rows    = img.rows
     
-    pixels = img.two_d_array_of_pixels
+    pixels = img.two_d_array_of_pixels.transpose
     
     seam.each do |column, row|
       pixels[row].delete_at(column)
     end
 
+#     outpix = []
+#     0.upto(columns - 1) do |column|
+#       0.upto(rows) do |row|
+#         pixel = pixels[column][row]
+#         if pixel.nil?
+# #          puts "NIL at : row #{row} column #{column}"
+#         else
+#           outpix << pixel
+#         end
+#       end
+#     end
+    
     carved_img = Image.new(columns - 1, rows)
     carved_img.store_pixels(0,0, columns - 1, rows, pixels.flatten)
     carved_img

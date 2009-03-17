@@ -134,9 +134,9 @@ class Magick::Image
   def two_d_array_with_export_pixels
     _pixels = export_pixels(0, 0, columns, rows, "I")
     array = Array.two_d_array(columns, rows)
-    0.upto(columns - 1) do |x|
-      0.upto(rows - 1) do |y|
-        array[y][x] = _pixels[y*columns + x]
+    0.upto(columns - 1) do |column|
+      0.upto(rows - 1) do |row|
+        array[column][row] = _pixels[row*columns + column]
       end
     end
     
@@ -155,14 +155,14 @@ class Magick::Image
     
     array
   end
-  
+
   ############# Benchmarking alternatives two_d_array #####################
   def two_d_array_with_dispatch
     _pixels = dispatch(0,0,columns,rows,"I")
     array = Array.two_d_array(columns, rows)
-    0.upto(columns - 1) do |x|
-      0.upto(rows - 1) do |y|
-        array[y][x] = _pixels[y*columns + x]
+    0.upto(columns - 1) do |column|
+      0.upto(rows - 1) do |row|
+        array[column][row] = _pixels[row*columns + column]
       end
     end
     
@@ -172,9 +172,9 @@ class Magick::Image
   def two_d_array_with_view
     _view = view(0,0,columns,rows)
     array = Array.two_d_array(columns, rows)
-    0.upto(columns - 1) do |x|
-      0.upto(rows - 1) do |y|
-        array[y][x] = _view[y][x].red
+    0.upto(columns - 1) do |column|
+      0.upto(rows - 1) do |row|
+        array[column][row] = _view[row][column].red
       end
     end
     

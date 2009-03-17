@@ -49,7 +49,18 @@ describe Magick::Image do
     it "should return a 2-d array of grayscale values from the image" do
       white = img(@fixtures_path + "/white3x3.png")
       
+      puts white.class
+      
       white.two_d_array.should == [[255,255,255],[255,255,255],[255,255,255]]
+    end
+    
+    it "should work on an img that is not square" do
+      white4x3 = img(@fixtures_path + "/white4x3.png")
+      
+      white4x3.first.two_d_array.should == [[255,255,255],
+                                            [255,255,255],
+                                            [255,255,255],
+                                            [255,255,255]]
     end
     
     it "should only be called on a grayscale image" do

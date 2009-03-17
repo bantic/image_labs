@@ -25,23 +25,26 @@ describe EnergyMapper do
     
     seam = em.find_seam!
     img.manipulate_pixels(seam) {|pix| Pixel.new(255,0,0)}
+    img.write(@tmp_path + "/cart_seam.gif")
+    (@tmp_path + "/cart_seam.gif").should equal_image(@fixtures_path + "/cart_seam.gif")
   end
   
   it "should populate the energy map correctly by math" do
-    image_array = [[1,2,3],
-                   [1,0,1],
-                   [2,1,0]]
+    image_array = [[1,2,3], 
+                   [1,0,1], 
+                   [2,1,0]] 
     
-    energy_map = [[1,2,3],
-                  [2,1,3],
-                  [3,2,1]]
+    energy_map = [[1,3,4],
+                  [1,1,2],
+                  [2,2,1]]
     EnergyMapper.populate_energy_map(image_array).should == energy_map
   end
   
   it "should find a seam correctly by math" do
     energy_map = [[1,2,3],
-                  [2,3,0],
-                  [3,2,1]]
+                  [2,3,2],
+                  [3,0,1]]
+                  
     EnergyMapper.find_seam(energy_map).should == [[2,2],[2,1],[1,0]]
   end
   

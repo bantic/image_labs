@@ -28,37 +28,37 @@ class EnergyMapper
   def self.populate_energy_map(img_array)
     energy_map = img_array
     
-    height = img_array.size - 1
-    width  = img_array.first.size - 1
+    width = img_array.size - 1
+    height  = img_array.first.size - 1
 
-    0.upto(height) do |y|
+    0.upto(height) do |row|
 
-      if y > 0
+      if row > 0
         # puts "#{y-1}: " + energy_array[y-1].collect{|int| sprintf("%5d",int)}.join("")
         # puts "#{y}: " + energy_array[y].collect{|int| sprintf("%5d",int)}.join("")
         # wait_for_key
       end
 
-      0.upto(width) do |x|
-        base_energy = img_array[y][x]
+      0.upto(width) do |column|
+        base_energy = img_array[column][row]
 
-        if y == 0               # first row. energy is just edge value.
+        if row == 0               # first row. energy is just edge value.
           energy = base_energy
-        elsif x == 0 || x == width
-          if x == 0  # left edge, only two pixels below
-            energy = base_energy +  [img_array[y - 1][x    ],
-                                     img_array[y - 1][x + 1]].min
+        elsif column == 0 || column == width
+          if column == 0  # left edge, only two pixels below
+            energy = base_energy +  [img_array[column    ][row - 1],
+                                     img_array[column + 1][row - 1]].min
           else       # right edge, only two pixels below
-            energy = base_energy +  [img_array[y - 1][x - 1],
-                                     img_array[y - 1][x    ]].min
+            energy = base_energy +  [img_array[column - 1][row - 1],
+                                     img_array[column    ][row - 1]].min
           end
         else          # not an edge, check all three pixels below
-          energy   = base_energy +  [img_array[y - 1][x - 1],
-                                     img_array[y - 1][x    ],
-                                     img_array[y - 1][x + 1]].min
+          energy   = base_energy +  [img_array[column - 1][row - 1],
+                                     img_array[column    ][row - 1],
+                                     img_array[column + 1][row - 1]].min
         end
         
-        energy_map[y][x] = energy
+        energy_map[column][row] = energy
       end
     end
     
@@ -67,6 +67,10 @@ class EnergyMapper
   
   def self.find_seam(energy_map)
     @seam = []
+    
+    # It's easier to manipulate the energy map row-by-row rather than
+    # column-by-column, so transpose the energy map now
+    energy_map = energy_map.transpose
     
     height = energy_map.size - 1
     width  = energy_map.first.size - 1
@@ -98,11 +102,11 @@ class EnergyMapper
   end
   
   def normalize_energy_map_to_pixels
-    pixels_out = Array.two_d_array(@img.columns, @img.rows)
+    pixels_out = []
     max = @energy_map.flatten.max
-    @img.y_range.each do |y|
-      @img.x_range.each do |x|
-        pixels_out[y][x] = Magick::Pixel.gray( ((@energy_map[y][x] / max.to_f) * 255).to_i )
+    @img.y_range.each do |row|
+      @img.x_range.each do |column|
+        pixels_out << ((@energy_map[column][row] / max.to_f) * 255).to_i
       end
     end
     
@@ -113,7 +117,7 @@ class EnergyMapper
     pixels = normalize_energy_map_to_pixels
     
     energy_map_image = @img.dup
-    energy_map_image.store_pixels(0,0,@img.columns,@img.rows, pixels.flatten)
+    energy_map_image.import_pixels(0,0,@img.columns,@img.rows,"I",pixels)
     energy_map_image.write(path)
   end
   

@@ -44,14 +44,15 @@ class EdgeDetector
   
   def detect_edges
     pixel_values     = @img.two_d_array
-    pixel_out_values = Array.two_d_array(@img.columns, @img.rows)
+    pixel_out_values = []
     
-    @img.x_range.each do |x|
-      @img.y_range.each do |y|
+    @img.y_range.each do |row|
+      print '.' if row % 10 == 0
+      @img.x_range.each do |column|
 
         magnitude = xsum = ysum = 0
 
-        if x == 0 || y == 0 || x == @img.right || y == @img.bottom
+        if column == 0 || row == 0 || column == @img.right || row == @img.bottom
           magnitude = MAX_MAGNITUDE
         else
           # for the 8 surrounding pixels to x,y, apply the filter value and add to the xsum
@@ -59,8 +60,8 @@ class EdgeDetector
             [-1,0,1].each do |j|
               # can use .red since all pixel values are the same since we are grayscale
               # note that we have to invert j and i in the x_mask and y_mask calls
-              xsum += pixel_values[y + j][x + i] * x_mask(i,j)
-              ysum += pixel_values[y + j][x + i] * y_mask(i,j)
+              xsum += pixel_values[column + j][row + i] * x_mask(i,j)
+              ysum += pixel_values[column + j][row + i] * y_mask(i,j)
             end
           end
           
@@ -68,12 +69,12 @@ class EdgeDetector
         end
 
         magnitude = [magnitude, MAX_MAGNITUDE].min # cap at MAX_MAGNITUDE
-        pixel_out_values[y][x] = Magick::Pixel.gray(magnitude)
+        pixel_out_values << magnitude
       end
     end
     
     edges = Image.new(@img.columns,@img.rows)
-    edges.store_pixels(0,0,@img.columns,@img.rows,pixel_out_values.flatten)
+    edges.import_pixels(0,0,@img.columns,@img.rows,"I",pixel_out_values)
     edges
   end
   

@@ -11,8 +11,8 @@ describe SeamCarver do
     FileUtils.mkdir_p(@tmp_path)
   end
   
-  it "should carve a seam with the second method" do
-    img = img(@fixtures_path + "/white100x100-red-diagonal-line.gif")
+  it "should carve a seam one way" do
+    img = img(@fixtures_path + "/white100x100-red-diagonal-line-nw.gif")
     
     seam = []
     0.upto(99) {|i| seam << [99-i,99-i]} # diagonal seam
@@ -21,6 +21,41 @@ describe SeamCarver do
     carved.write(@tmp_path + "/white100x99.gif")
     (@tmp_path + "/white100x99.gif").should equal_image(@fixtures_path + "/white100x99.gif")
   end
+
+  it "should carve a seam another way" do
+    img = img(@fixtures_path + "/white100x100-red-diagonal-line-nw.gif")
+    
+    seam = []
+    0.upto(99) {|i| seam << [99-i,99-i]} # diagonal seam
+
+    carved = SeamCarver.carve_column(img, seam)
+    carved.write(@tmp_path + "/white100x99.gif")
+    (@tmp_path + "/white100x99.gif").should equal_image(@fixtures_path + "/white100x99.gif")
+  end
+
+  it "should carve an img taller than wide correctly" do
+    img = img(@fixtures_path + "/white99x100-red-diagonal-line-nw.gif")
+    
+    seam = []
+    0.upto(98) {|i| seam << [i,i+1]} # diagonal seam
+
+    carved = SeamCarver.carve_column(img, seam)
+    carved.write(@tmp_path + "/white100x99.gif")
+    (@tmp_path + "/white100x99.gif").should equal_image(@fixtures_path + "/white98x100.gif")
+  end
+
+  it "should carve an img wider than tall correctly" do
+    img = img(@fixtures_path + "/white100x99-red-diagonal-line-nw.gif")
+    
+    seam = []
+    0.upto(98) {|i| seam << [i+1,i]} # diagonal seam
+
+    carved = SeamCarver.carve_column(img, seam)
+    carved.write(@tmp_path + "/white100x99.gif")
+    carved.write("out.gif")
+    (@tmp_path + "/white100x99.gif").should equal_image(@fixtures_path + "/white99x99.gif")
+  end
+
   
   after(:each) do
     `rm -rf #{@tmp_path}`
