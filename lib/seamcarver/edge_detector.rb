@@ -37,9 +37,24 @@ class EdgeDetector
     raise ArgumentError, "Image should be grayscale" unless @img.gray?
   end
   
+  # uses rmagick/imagemagick edge function. Faster but really low-quality results
   def detect_edges_fast
     edges = @img.edge
     return edges
+  end
+  
+  #
+  # Use the binary CoreImageTool to do these edges using Apple's CoreImage
+  # filters.
+  # See: http://www.entropy.ch/software/macosx/coreimagetool/
+  # and:
+  # http://github.com/bantic/core_image_tool/tree/master
+  def detect_edges_with_core_image_tool(output_filename="edges.png")
+    tool_path = "/usr/local/bin/CoreImageTool"
+    filename = @img.filename
+    command = "#{tool_path} load myimg #{filename} filter myimg CIEdges intensity=1.0 store myimg #{output_filename} public.png"
+    `#{command}`
+    return img(output_filename)
   end
   
   def detect_edges

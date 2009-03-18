@@ -1,7 +1,7 @@
 require 'fileutils'
 
 class SeamCarver
-  attr_accessor :base_img
+  attr_accessor :base_img, :edge_img
   
   def initialize(img_path)
     @base_img = img(img_path)
@@ -40,6 +40,45 @@ class SeamCarver
     end
   end
   
+  # do it by carving each image rather than recalculating each time
+  def self.create_animation_faster(base_img_path, frames=50, redlines_path="redlines", carves_path="carves", edges_path="edges", energy_path="energy")
+    FileUtils.mkdir_p(redlines_path)
+    FileUtils.mkdir_p(carves_path)
+    FileUtils.mkdir_p(edges_path)
+    FileUtils.mkdir_p(energy_path)
+    
+    sc = SeamCarver.new(base_img_path)
+    edge_img = sc.find_edge_img
+    edge_img.write(edges_path + "/0.png")
+    seam = sc.find_seam!(0)
+    sc.base_img.manipulate_pixels(seam) {|p| Pixel.new(255,0,0)}
+    sc.base_img.write(redlines_path + "/0.png")
+    
+    carved = SeamCarver.carve_column(img(base_img_path),seam)
+    carved.write(carves_path + "/0.png")
+    
+    1.upto(frames) do |idx|
+      puts "#{idx}: #{base_img_path}"
+      sc = SeamCarver.new(base_img_path)
+      
+      sc.edge_img = SeamCarver.carve_column(img(edges_path + "/#{idx - 1}.png"),seam)
+      sc.edge_img.write("edges/#{idx}.png")
+      
+      
+      seam = sc.find_seam!(idx)
+      sc.base_img.manipulate_pixels(seam) {|p| Pixel.new(255,0,0)}
+      
+      puts "Writing redlines"
+      sc.base_img.write(redlines_path + "/#{idx}.png")
+      
+      puts "Writing carved"
+      carved = SeamCarver.carve_column(img(base_img_path),seam)
+      carved.write(carves_path + "/#{idx}.png")
+      
+      base_img_path = carves_path + "/#{idx}.png"
+    end
+  end
+  
   def find_edge_img
     puts "Finding edges"
     @edge_img ||= EdgeDetector.new(@gray_img).detect_edges
@@ -47,7 +86,6 @@ class SeamCarver
   
   def find_seam!(idx=nil)
     edge_img = find_edge_img
-    edge_img.write("edges/#{idx}.png")
     
     puts "Creating energy map"
     em = EnergyMapper.new(edge_img)
