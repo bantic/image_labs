@@ -1,11 +1,11 @@
 class EdgeDetector
   
   # Use Prewitt Edge Detection
-  X_MASK = [[-1, 0, 1],
+  Y_MASK = [[-1, 0, 1],
             [-1, 0, 1],
             [-1, 0, 1]]
 
-  Y_MASK = [[ 1,  1,  1],
+  X_MASK = [[ 1,  1,  1],
             [ 0,  0,  0],
             [-1, -1, -1]]
 
@@ -57,12 +57,12 @@ class EdgeDetector
     return img(output_filename)
   end
   
-  def detect_edges
+  def detect_edges( orientation = :both )
     pixel_values     = @img.two_d_array
     pixel_out_values = []
     
     @img.y_range.each do |row|
-      print '.' if row % 10 == 0
+      print '.' if row % 10 == 0    # progress indicator
       @img.x_range.each do |column|
 
         magnitude = xsum = ysum = 0
@@ -71,12 +71,16 @@ class EdgeDetector
           magnitude = MAX_MAGNITUDE
         else
           # for the 8 surrounding pixels to x,y, apply the filter value and add to the xsum
-          [-1,0,1].each do |i|
-            [-1,0,1].each do |j|
-              # can use .red since all pixel values are the same since we are grayscale
-              # note that we have to invert j and i in the x_mask and y_mask calls
-              xsum += pixel_values[column + j][row + i] * x_mask(i,j)
-              ysum += pixel_values[column + j][row + i] * y_mask(i,j)
+          [-1,0,1].each do |x_offset|
+            [-1,0,1].each do |y_offset|
+
+              if orientation == :both || orientation == :x
+                xsum += pixel_values[column + y_offset][row + x_offset] * x_mask(x_offset,y_offset)
+              end
+              if orientation == :both || orientation == :y
+                ysum += pixel_values[column + y_offset][row + x_offset] * y_mask(x_offset,y_offset)
+              end
+              
             end
           end
           
