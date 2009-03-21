@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + "/../lib/spec_helpers"
 require 'spec'
 require 'fileutils'
-
+require 'ruby-debug'
 
 describe SeamCarver do
   before(:each) do
@@ -16,10 +16,9 @@ describe SeamCarver do
     
     seam = []
     0.upto(99) {|i| seam << [99-i,99-i]} # diagonal seam
-
+    
     carved = SeamCarver.carve_column(img, seam)
-    carved.write(@tmp_path + "/white100x99.gif")
-    (@tmp_path + "/white100x99.gif").should equal_image(@fixtures_path + "/white100x99.gif")
+    carved.should nearly_equal_image(@fixtures_path + "/white99x100.gif")
   end
 
   it "should carve a seam another way" do
@@ -29,8 +28,7 @@ describe SeamCarver do
     0.upto(99) {|i| seam << [99-i,99-i]} # diagonal seam
 
     carved = SeamCarver.carve_column(img, seam)
-    carved.write(@tmp_path + "/white100x99.gif")
-    (@tmp_path + "/white100x99.gif").should equal_image(@fixtures_path + "/white100x99.gif")
+    carved.should nearly_equal_image(@fixtures_path + "/white99x100.gif")
   end
 
   it "should carve an img taller than wide correctly" do
@@ -40,8 +38,7 @@ describe SeamCarver do
     0.upto(98) {|i| seam << [i,i+1]} # diagonal seam
 
     carved = SeamCarver.carve_column(img, seam)
-    carved.write(@tmp_path + "/white100x99.gif")
-    (@tmp_path + "/white100x99.gif").should equal_image(@fixtures_path + "/white98x100.gif")
+    carved.should nearly_equal_image(@fixtures_path + "/white98x100.gif")
   end
 
   it "should carve an img wider than tall correctly" do
@@ -51,8 +48,7 @@ describe SeamCarver do
     0.upto(98) {|i| seam << [i+1,i]} # diagonal seam
 
     carved = SeamCarver.carve_column(img, seam)
-    carved.write(@tmp_path + "/white100x99.gif")
-    (@tmp_path + "/white100x99.gif").should equal_image(@fixtures_path + "/white99x99.gif")
+    carved.should nearly_equal_image(@fixtures_path + "/white99x99.gif")
   end
 
   

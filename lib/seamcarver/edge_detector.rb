@@ -1,4 +1,5 @@
 class EdgeDetector
+  VERBOSE=false
   
   # Use Prewitt Edge Detection
   Y_MASK = [[-1, 0, 1],
@@ -62,7 +63,7 @@ class EdgeDetector
     pixel_out_values = []
     
     @img.y_range.each do |row|
-      print '.' if row % 10 == 0    # progress indicator
+      print '.' if row % 10 == 0 && VERBOSE   # progress indicator
       @img.x_range.each do |column|
 
         magnitude = xsum = ysum = 0

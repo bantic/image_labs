@@ -14,8 +14,7 @@ describe EnergyMapper do
     em = EnergyMapper.new(@fixtures_path + "/cart_edges.jpg")
     em.populate_energy_map!
 
-    em.write_normalized_energy_map(@tmp_path + "/cart_energy_map.jpg")
-    (@tmp_path + "/cart_energy_map.jpg").should equal_image(@fixtures_path + "/cart_energy_map.jpg")
+    em.normalized_energy_map.should nearly_equal_image(@fixtures_path + "/cart_energy_map.jpg")
   end
 
   it "should find the seam correctly" do
@@ -24,8 +23,7 @@ describe EnergyMapper do
     
     seam = em.find_seam!
     img.manipulate_pixels(seam) {|pix| Pixel.new(255,0,0)}
-    img.write(@tmp_path + "/cart_seam.gif")
-    (@tmp_path + "/cart_seam.gif").should equal_image(@fixtures_path + "/cart_seam.gif")
+    img.should nearly_equal_image(@fixtures_path + "/cart_seam.gif")
   end
   
   it "should populate the energy map correctly by math" do

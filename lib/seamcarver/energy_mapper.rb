@@ -113,12 +113,16 @@ class EnergyMapper
     pixels_out
   end
   
-  def write_normalized_energy_map(path)
+  def normalized_energy_map
     pixels = normalize_energy_map_to_pixels
     
-    energy_map_image = @img.dup
+    energy_map_image = Image.new(@img.columns,@img.rows)
     energy_map_image.import_pixels(0,0,@img.columns,@img.rows,"I",pixels)
-    energy_map_image.write(path)
+    energy_map_image
+  end
+  
+  def write_normalized_energy_map(path)
+    normalized_energy_map.write(path)
   end
   
 end
