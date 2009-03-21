@@ -41,12 +41,15 @@ class Magick::Image
     columns - 1
   end
   
+  def same_dimensions(other)
+    columns == other.columns && rows == other.rows
+  end
+  
   # the intensity of this image
   def intensity
     total_intensity = export_pixels(0,0,columns,rows,"I").inject(0) {|sum,intensity| sum += intensity}
     total_intensity / (columns * rows)
   end
-  ############
   
   # Do something to all the pixels specified in +locations_array+
   # Locations_array is an array of [column,row] tuples
@@ -55,7 +58,7 @@ class Magick::Image
     manipulate_pixels_with_get_pixels(locations_array, &blck)
   end
   
-  # yields a Pixel
+  # yields a Pixel for each [column,row] tuple in +locations_array+
   def manipulate_pixels_with_get_pixels(locations_array, &blck)
     pixels = get_pixels(0,0,columns,rows)
     locations_array.each do |column, row|
@@ -64,45 +67,10 @@ class Magick::Image
     store_pixels(0,0,columns,rows,pixels)
   end
 
-  #########################################################################
-  ## The following manipulate_pixels_with_XXX methods are here for
-  ## benchmarking purposes. Benchmarking (see benchmark/benchmark.rb)
-  ## shows that manipulate_pixels_with_get_pixels is the fastest, so that's
-  ## what we use
-  #########################################################################
-
-  # yields an array of 3 values for R,G,B 0-255
-  def manipulate_pixels_with_export_pixels(locations_array, &blck)
-    _pixels = export_pixels(0,0,columns,rows,"RGB")
-    locations_array.each do |column, row|
-      _pixels[ 3 * (row*columns + column), 3] = yield _pixels[ 3 * (row*columns + column), 3]
-    end
-    import_pixels(0,0,columns,rows,"RGB",_pixels)
-  end
-
-  # yields an array of 3 values for R,G,B 0-255
-  def manipulate_pixels_with_export_pixels_as_str(locations_array, &blck)
-    _pixels = export_pixels_to_str(0,0,columns,rows,"RGB").unpack("C*")
-    locations_array.each do |column, row|
-      _pixels[ 3 * (row*columns + column), 3] = yield _pixels[ 3 * (row*columns + column), 3]
-    end
-    t = Time.now
-    import_pixels(0,0,columns,rows,"RGB",_pixels)
-  end
-  
-  # yields a pixel
-  def manipulate_pixels_with_view(locations_array, &blck)
-    _view = view(0,0,columns,rows)
-    locations_array.each do |column, row|
-      _view[row][column] = yield _view[row][column]
-    end
-    _view.sync
-  end
-  ########################################################################
-  ######## / alternative manipulate_pixels_with_XXX methods ##############
-  ########################################################################
-  
-  # Returns a two-d array of pixel grayscale values 0-255
+  # Returns a [columns][rows] two-d array of pixel grayscale values 0-255
+  # E.g., To address the pixel in 10th column, 5th row:
+  #    array = img.two_d_array
+  #    pixel = array[9][4]
   def two_d_array
     Kernel.raise ArgumentError, "Only call two_d_array on a grayscale image" unless gray?
     two_d_array_with_export_pixels
@@ -119,6 +87,7 @@ class Magick::Image
     end
   end
   
+  # Returns array of tuples of [r,g,b]
   def all_pixels_as_arrays
     all_pixels(false)
   end
@@ -157,6 +126,7 @@ class Magick::Image
   end
 
   ############# Benchmarking alternatives two_d_array #####################
+  # for benchmarking only
   def two_d_array_with_dispatch
     _pixels = dispatch(0,0,columns,rows,"I")
     array = Array.two_d_array(columns, rows)
@@ -169,6 +139,7 @@ class Magick::Image
     array
   end
   
+  # for benchmarking only
   def two_d_array_with_view
     _view = view(0,0,columns,rows)
     array = Array.two_d_array(columns, rows)
@@ -181,4 +152,45 @@ class Magick::Image
     array
   end
   ############# /Benchmarking alternatives #################################
+  
+  #########################################################################
+  ## The following manipulate_pixels_with_XXX methods are here for
+  ## benchmarking purposes. Benchmarking (see benchmark/benchmark.rb)
+  ## shows that manipulate_pixels_with_get_pixels is the fastest, so that's
+  ## what we use
+  #########################################################################
+
+  # for benchmarking only
+  # yields an array of 3 values for R,G,B 0-255
+  def manipulate_pixels_with_export_pixels(locations_array, &blck)
+    _pixels = export_pixels(0,0,columns,rows,"RGB")
+    locations_array.each do |column, row|
+      _pixels[ 3 * (row*columns + column), 3] = yield _pixels[ 3 * (row*columns + column), 3]
+    end
+    import_pixels(0,0,columns,rows,"RGB",_pixels)
+  end
+
+  # for benchmarking only
+  # yields an array of 3 values for R,G,B 0-255
+  def manipulate_pixels_with_export_pixels_as_str(locations_array, &blck)
+    _pixels = export_pixels_to_str(0,0,columns,rows,"RGB").unpack("C*")
+    locations_array.each do |column, row|
+      _pixels[ 3 * (row*columns + column), 3] = yield _pixels[ 3 * (row*columns + column), 3]
+    end
+    t = Time.now
+    import_pixels(0,0,columns,rows,"RGB",_pixels)
+  end
+  
+  # for benchmarking only
+  # yields a pixel
+  def manipulate_pixels_with_view(locations_array, &blck)
+    _view = view(0,0,columns,rows)
+    locations_array.each do |column, row|
+      _view[row][column] = yield _view[row][column]
+    end
+    _view.sync
+  end
+  ########################################################################
+  ######## / alternative manipulate_pixels_with_XXX methods ##############
+  ########################################################################
 end

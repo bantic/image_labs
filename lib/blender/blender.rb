@@ -2,12 +2,7 @@ class Blender
   
   # adds values in each channel, limiting to 255
   def self.add(base, blend)
-    self.blend_images(base, blend) do |pixel_base, pixel_blend|
-      red     = [pixel_base.red + pixel_blend.red, 255].min
-      green   = [pixel_base.green + pixel_blend.green, 255].min
-      blue    = [pixel_base.blue  + pixel_blend.blue, 255].min
-      Pixel.new(red,green,blue)
-    end
+    self.blend_images(base, blend) {|baseval,blendval| [baseval + blendval, 255].min}
   end
   
   # effectively makes the base show through as much as the blend layer
@@ -16,35 +11,32 @@ class Blender
   # shows up normal in the base, and stuff that's dark in the blend layer
   # shows up darker in the base
   def self.multiply(base, blend)
-    self.blend_images(base, blend) do |pixel_base, pixel_blend|
-      red     = pixel_base.red * pixel_blend.red / 255
-      green   = pixel_base.green * pixel_blend.green / 255
-      blue    = pixel_base.blue  * pixel_blend.blue / 255
-      Pixel.new(red,green,blue)
-    end
+    self.blend_images(base,blend) {|baseval, blendval| baseval * blendval / 255}
   end
   
   # difference blend two images
   def self.difference(base,blend)
-    self.blend_images(base, blend) do |pixel_base, pixel_blend|
-      red     = (pixel_base.red - pixel_blend.red).abs
-      green   = (pixel_base.green - pixel_blend.green).abs
-      blue    = (pixel_base.blue  - pixel_blend.blue).abs
-      Pixel.new(red,green,blue)
+    self.blend_images(base, blend) {|baseval, blendval| (baseval - blendval).abs}
+  end
+  
+  # Reflect
+  def self.reflect(base,blend)
+    self.blend_images(base, blend) do |baseval, blendval|
+      baseval == 255 ? 255 : [255, baseval * baseval / (255 - blendval)].min
     end
   end
   
-  # Compare a set of arrays of pixels rather
+  # Glow is the opposite of reflect
+  def self.glow(base,blend)
+    self.reflect(blend,base)
+  end
+  
+  # Compare a set of arrays of pixels rather than two images
   def self.difference_pixels_with_pixels(base_pixels,blend_pixels)
-    self.blend_pixels(base_pixels,blend_pixels) do |pixel_base, pixel_blend|
-      red     = (pixel_base.red - pixel_blend.red).abs
-      green   = (pixel_base.green - pixel_blend.green).abs
-      blue    = (pixel_base.blue  - pixel_blend.blue).abs
-      Pixel.new(red,green,blue)
-    end
+    self.blend_pixels(base_pixels,blend_pixels) {|baseval, blendval| (baseval - blendval).abs }
   end
   
-  # Iterates through large_image looking for most probably place for the small
+  # Iterates through large_image looking for most probable place for the small
   # image
   def self.find_by_difference_with_pixel_array(large_image,small_image)
     smallpix = small_image.all_pixels_as_arrays
@@ -82,6 +74,29 @@ class Blender
     diffmap
   end
 
+  def self.blend_images(base, blend, yield_pixels=false, &blck)
+    raise ArgumentError, "Images must have same dimensions" unless base.same_dimensions(blend)
+    
+    out_image = Image.new(base.columns, base.rows)
+    out_pixels = self.blend_pixels(base.all_pixels, blend.all_pixels, yield_pixels, &blck)
+    out_image.store_pixels(0,0,base.columns,base.rows,out_pixels)
+  end
+  
+  def self.blend_pixels(base_pixels, blend_pixels, yield_pixels=false)
+    out_pixels = []
+    base_pixels.each_with_index do |pixel_base, idx|
+      pixel_blend = blend_pixels[idx]
+      
+      if yield_pixels
+        out_pixels << (yield [pixel_base, pixel_blend])
+      else
+        color_vals = [:red,:green,:blue].collect {|color| yield [pixel_base.send(color), pixel_blend.send(color)] }
+        out_pixels << Pixel.new(*color_vals)
+      end
+    end
+    out_pixels
+  end
+  
   #######################################################################
   # The other find_by_difference_with_XXX methods are for benchmarking
   #######################################################################
@@ -166,38 +181,5 @@ class Blender
       end
     end
     return diff_vals
-  end
-  
-  def self.reflect(base,blend)
-    self.blend_images(base, blend) do |pixel_base, pixel_blend|
-      red     = pixel_base.red == 255 ? pixel_blend.red : [255, (pixel_base.red * pixel_base.red / (255 - pixel_blend.red))].min
-      green     = pixel_base.green == 255 ? pixel_blend.green : [255, (pixel_base.green * pixel_base.green / (255 - pixel_blend.green))].min
-      blue     = pixel_base.blue == 255 ? pixel_blend.blue : [255, (pixel_base.blue * pixel_base.blue / (255 - pixel_blend.blue))].min
-      Pixel.new(red,green,blue)
-    end
-  end
-  
-  def self.glow(base,blend)
-    self.reflect(blend,base)
-  end
-  
-  def self.blend_images(base, blend, &blck)
-    raise ArgumentError, "Images must have same dimensions" unless self.same_dimensions?(base,blend)
-    
-    out_image = Image.new(base.columns, base.rows)
-    out_pixels = self.blend_pixels(base.all_pixels, blend.all_pixels, &blck)
-    out_image.store_pixels(0,0,base.columns,base.rows,out_pixels)
-  end
-  
-  def self.blend_pixels(base_pixels, blend_pixels)
-    out_pixels = []
-    base_pixels.each_with_index do |pixel_base, idx|
-      out_pixels << (yield [pixel_base, blend_pixels[idx]])
-    end
-    out_pixels
-  end
-  
-  def self.same_dimensions?(first,second)
-    first.rows == second.rows && first.columns == second.columns
   end
 end
