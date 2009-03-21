@@ -39,6 +39,9 @@ def equal_image(other_image)
   EqualImage.new(other_image)
 end
 
+#
+# 
+#
 class NearlyEqualImage
   def initialize(other_image)
     @other_image = load_image(other_image)
@@ -65,12 +68,17 @@ class NearlyEqualImage
     return (@other_image.difference(@image)[1]) < @tolerance
   end
   
+  def within(tolerance)
+    @tolerance = tolerance
+    self
+  end
+  
   def failure_message
-    "expected the images to be equal"
+    "expected the images to be equal with tolerance of #{@tolerance}"
   end
   
   def negative_failure_message
-    "images should not have been equal but they were"
+    "images should not have been equal (with tolerance #{@tolerance} but they were"
   end
 end
 
