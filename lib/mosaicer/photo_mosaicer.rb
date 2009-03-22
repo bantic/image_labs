@@ -142,6 +142,6 @@ class PhotoMosaicer
   end
   
   def clean_up_tmp_dir!
-    `rm -rf #{tmp_dir}` if tmp_dir
+    `rm -rf #{tmp_dir}`
   end
 end

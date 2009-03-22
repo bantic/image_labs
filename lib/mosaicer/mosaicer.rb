@@ -2,13 +2,13 @@ require 'fileutils'
 
 class Mosaicer
   # Usage:
-  # mc = Mosaicer.new("dir_filled_with_images", 60, 60, 15, 10, true)
+  # # Create a mosaic w/ 60x60 images, 15 columns, 10 pixels of padding, and only full rows
+  # mc = Mosaicer.new("dir_filled_with_images", 60, 15, 10, true)
   # mosaic = mc.create_mosaic
   # mosaic.write("mosaic.jpg")
-  def initialize(input_dir, image_width, image_height, columns, padding=0, full_rows_only=false)
+  def initialize(input_dir, tile_size, columns, padding=0, full_rows_only=false)
     @input_dir    = input_dir
-    @image_width  = image_width
-    @image_height = image_height
+    @image_width  = @image_height = tile_size
     @columns      = columns
     @padding      = padding
     @full_rows_only = full_rows_only
@@ -44,6 +44,7 @@ class Mosaicer
       image_row.each_with_index do |image, col_num|
         x_offset = (image.columns + 2 * padding) * col_num
         y_offset = (image.rows + 2 * padding) * row_num
+        
         image.page = Rectangle.new(image.columns,image.rows,x_offset,y_offset)
       end
       row_num += 1
@@ -60,7 +61,7 @@ class Mosaicer
     
     imgs.each_with_index do |img, idx|
       img = yield img
-      img.write(output_dir + "/image_#{idx}.jpg")
+      img.write(output_dir + "/#{ sprintf("%05d",idx) }.png")
     end
   end
 end
