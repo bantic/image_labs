@@ -82,6 +82,13 @@ class Blender
     out_image.store_pixels(0,0,base.columns,base.rows,out_pixels)
   end
   
+  def self.blend_images_by_pixel(base,blend,&blck)
+    self.blend_images(base,blend,true,&blck)
+  end
+
+  # Blends pixel-by-pixel the +base_pixels+ and +blend_pixels+ arrays
+  # Yield Pixel objects if +yield_pixels+ is true, otherwise yield
+  # a tuple of [val1, val2] for each of the r,g,b channels
   def self.blend_pixels(base_pixels, blend_pixels, yield_pixels=false)
     out_pixels = []
     base_pixels.each_with_index do |pixel_base, idx|
@@ -90,7 +97,9 @@ class Blender
       if yield_pixels
         out_pixels << (yield [pixel_base, pixel_blend])
       else
-        color_vals = [:red,:green,:blue].collect {|color| yield [pixel_base.send(color), pixel_blend.send(color)] }
+        color_vals = [:red,:green,:blue].collect do |color| 
+          yield [pixel_base.send(color), pixel_blend.send(color)]
+        end
         out_pixels << Pixel.new(*color_vals)
       end
     end
