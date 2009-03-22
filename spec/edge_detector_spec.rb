@@ -1,10 +1,9 @@
 require File.dirname(__FILE__) + "/../lib/spec_helpers"
 require 'spec'
 require 'fileutils'
-require 'ruby-debug'
 
 describe EdgeDetector do
-  before(:all) do
+  before(:each) do
     dirname = File.dirname(__FILE__)
     @fixtures_path = dirname + "/../fixtures"
     @tmp_path = dirname + "/tmp"
@@ -22,7 +21,7 @@ describe EdgeDetector do
     lambda { EdgeDetector.new(@fixtures_path + "/color.jpg") }.should raise_error
   end
   
-  after(:all) do
+  after(:each) do
     `rm -rf #{@tmp_path}`
   end
 end
