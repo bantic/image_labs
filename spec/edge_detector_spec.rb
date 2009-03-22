@@ -14,7 +14,7 @@ describe EdgeDetector do
     ed = EdgeDetector.new(@fixtures_path + "/cart_gray.jpg")
     edges = ed.detect_edges
     
-    edges.should nearly_equal_image(@fixtures_path + "/cart_edges.jpg")
+    edges.should nearly_equal_image(@fixtures_path + "/cart_edges.png")
   end
   
   it "should only accept grayscale images for edge detection" do

@@ -1,14 +1,14 @@
 class EdgeDetector
-  VERBOSE=false
+  VERBOSE=true
   
   # Use Prewitt Edge Detection
   Y_MASK = [[-1, 0, 1],
             [-1, 0, 1],
             [-1, 0, 1]]
 
-  X_MASK = [[ 1,  1,  1],
-            [ 0,  0,  0],
-            [-1, -1, -1]]
+  X_MASK = [[ -1, -1, -1],
+            [  0,  0,  0],
+            [  1,  1,  1]]
 
   MAX_MAGNITUDE = begin
     QuantumRange
@@ -71,7 +71,7 @@ class EdgeDetector
         if column == 0 || row == 0 || column == @img.right || row == @img.bottom
           magnitude = MAX_MAGNITUDE
         else
-          # for the 8 surrounding pixels to x,y, apply the filter value and add to the xsum
+          # for the 8 surrounding pixels to x,y, apply the filter
           [-1,0,1].each do |x_offset|
             [-1,0,1].each do |y_offset|
 
@@ -85,7 +85,7 @@ class EdgeDetector
             end
           end
           
-          magnitude = xsum.abs + ysum.abs
+          magnitude = Math.sqrt(xsum * xsum + ysum * ysum)
         end
 
         magnitude = [magnitude, MAX_MAGNITUDE].min # cap at MAX_MAGNITUDE
