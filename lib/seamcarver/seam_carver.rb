@@ -79,6 +79,8 @@ class SeamCarver
     end
   end
   
+  # TODO: Use Image#extent to rectify the carved images for animation purposes
+  
   def find_edge_img
     puts "Finding edges"
     @edge_img ||= EdgeDetector.new(@gray_img).detect_edges
@@ -101,7 +103,8 @@ class SeamCarver
     rows    = img.rows
     
     # It's simpler to work with the array if it is transposed. That way we
-    # can reference the pixels on a row-by-row basis.
+    # can reference the pixels on a row-by-row basis, and also bring the pixels
+    # back in to the image with the #store_pixels method
     pixels = img.two_d_array_of_pixels.transpose
     
     seam.each do |column, row|
