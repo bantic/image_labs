@@ -61,7 +61,7 @@ class Mosaicer
     
     imgs.each_with_index do |img, idx|
       img = yield img
-      img.write(output_dir + "/#{ sprintf("%05d",idx) }.png")
+      img.write(output_dir + "/#{ sprintf("%03d",idx)}.png")
     end
   end
 end

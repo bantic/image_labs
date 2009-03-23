@@ -20,3 +20,9 @@ require File.dirname(__FILE__) + "/evolution/gene_pool"
 
 # ImageBlender
 require File.dirname(__FILE__) + "/blender/blender"
+
+# Only load Facer if we have the opencv gem
+def load_facer
+  require 'opencv'
+  require File.dirname(__FILE__) + "/facer/facer"
+end
