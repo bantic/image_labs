@@ -40,7 +40,7 @@ class SeamCarver
     end
   end
   
-  # do it by carving each image rather than recalculating each time
+  # do it by carving each image rather than recalculating edges each time
   def self.create_animation_faster(base_img_path, frames=50, redlines_path="redlines", carves_path="carves", edges_path="edges", energy_path="energy")
     FileUtils.mkdir_p(redlines_path)
     FileUtils.mkdir_p(carves_path)
@@ -66,7 +66,7 @@ class SeamCarver
       
       
       seam = sc.find_seam!(idx)
-      sc.base_img.manipulate_pixels(seam) {|p| Pixel.new(255,0,0)}
+      sc.base_img.manipulate_pixels(seam) {|p| Pixel.new(255,0,0)}  # Create a red line
       
       puts "Writing redlines"
       sc.base_img.write(redlines_path + "/#{idx}.png")
@@ -92,7 +92,7 @@ class SeamCarver
     puts "Creating energy map"
     em = EnergyMapper.new(edge_img)
     em.populate_energy_map!
-    em.write_normalized_energy_map("energy/#{idx}.png")
+    em.write_normalized_energy_map("energy/#{idx}.png") unless idx.nil?
     
     puts "Finding seam"
     seam = em.find_seam!

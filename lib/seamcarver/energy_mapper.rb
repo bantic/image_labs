@@ -21,10 +21,6 @@ class EnergyMapper
     @energy_map = EnergyMapper.populate_energy_map(@img_array)
   end
   
-  def wait_for_key
-    return $stdin.gets
-  end
-  
   def self.populate_energy_map(img_array)
     energy_map = img_array
     
@@ -32,12 +28,6 @@ class EnergyMapper
     height  = img_array.first.size - 1
 
     0.upto(height) do |row|
-
-      if row > 0
-        # puts "#{y-1}: " + energy_array[y-1].collect{|int| sprintf("%5d",int)}.join("")
-        # puts "#{y}: " + energy_array[y].collect{|int| sprintf("%5d",int)}.join("")
-        # wait_for_key
-      end
 
       0.upto(width) do |column|
         base_energy = img_array[column][row]
@@ -86,7 +76,7 @@ class EnergyMapper
           if min_pos == 0
             min_val = energy_map[row_num][min_pos, 2].min
             min_pos = energy_map[row_num][min_pos, 2].index(min_val) + min_pos
-          else
+          else # min_pos == width
             min_val = energy_map[row_num][min_pos - 1, 2].min
             min_pos = energy_map[row_num][min_pos - 1, 2].index(min_val) - 1 + min_pos
           end
