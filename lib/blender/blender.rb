@@ -5,6 +5,16 @@ class Blender
     self.blend_images(base, blend) {|baseval,blendval| [baseval + blendval, 255].min}
   end
   
+  # choose the maximum value
+  def self.lighten(base,blend)
+    self.blend_images(base, blend) {|baseval,blendval| [baseval, blendval].max}
+  end
+  
+  # choose the minimum value
+  def self.darken(base, blend)
+    self.blend_images(base, blend) {|baseval,blendval| [baseval, blendval].min}
+  end
+  
   # effectively makes the base show through as much as the blend layer
   # has that channel's color.  so red from the base shows through as much
   # as the blend is red.  In general, stuff that's white in the blend layer
