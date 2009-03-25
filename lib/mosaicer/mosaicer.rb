@@ -55,6 +55,8 @@ class Mosaicer
   
   # Turns images all into the same size and width and puts them
   # in a temporary directory
+  # TODO: Fix this so that it maintains the order.
+  #      Right now, image 100.png comes after 1.png, rather than after 99.png
   def self.rectify_images(input_dir, output_dir, &block)
     imgs = ImageList.new(*Dir.glob(File.expand_path(input_dir) + "/*"))
     FileUtils.mkdir_p(output_dir)
