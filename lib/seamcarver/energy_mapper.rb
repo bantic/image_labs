@@ -30,22 +30,22 @@ class EnergyMapper
     0.upto(height) do |row|
 
       0.upto(width) do |column|
-        base_energy = img_array[column][row]
+        base_energy = energy_map[column][row]
 
         if row == 0               # first row. energy is just edge value.
           energy = base_energy
         elsif column == 0 || column == width
           if column == 0  # left edge, only two pixels below
-            energy = base_energy +  [img_array[column    ][row - 1],
-                                     img_array[column + 1][row - 1]].min
+            energy = base_energy +  [energy_map[column    ][row - 1],
+                                     energy_map[column + 1][row - 1]].min
           else       # right edge, only two pixels below
-            energy = base_energy +  [img_array[column - 1][row - 1],
-                                     img_array[column    ][row - 1]].min
+            energy = base_energy +  [energy_map[column - 1][row - 1],
+                                     energy_map[column    ][row - 1]].min
           end
         else          # not an edge, check all three pixels below
-          energy   = base_energy +  [img_array[column - 1][row - 1],
-                                     img_array[column    ][row - 1],
-                                     img_array[column + 1][row - 1]].min
+          energy   = base_energy +  [energy_map[column - 1][row - 1],
+                                     energy_map[column    ][row - 1],
+                                     energy_map[column + 1][row - 1]].min
         end
         
         energy_map[column][row] = energy
