@@ -1,49 +1,49 @@
 require File.dirname(__FILE__) + "/../lib/lib"
 require 'benchmark'
 
-# img = img(File.dirname(__FILE__) + "/../fixtures/cart_gray.jpg")
-#  
-# n = 10
-# Benchmark.bm do |x|
-#   x.report("two_d_array_with_view") { n.times do; ar = img.two_d_array_with_view; end }
-#   x.report("two_d_array_with_export_pixels") { n.times do; ar = img.two_d_array_with_export_pixels; end }
-#   x.report("two_d_array_with_dispatch") { n.times do; ar = img.two_d_array_with_dispatch; end }
-#   x.report("two_d_array_with_get_pixels") { n.times do; ar = img.two_d_array_with_get_pixels; end }
-# end
-# 
-# color = img(File.dirname(__FILE__) + "/../fixtures/color.jpg")
-# locations_array = []
-# 0.upto(color.columns-1) do |column|
-#   0.upto(color.rows-1) do |row|
-#     locations_array << [column,row]
-#   end
-# end
-# 
-# 
-# Benchmark.bm do |x|
-#   x.report("manipulate_pixels_with_get_pixels") {
-#     color = img(File.dirname(__FILE__) + "/../fixtures/color.jpg")
-#     color.manipulate_pixels_with_get_pixels(locations_array) do |pixel|
-#       gray_val = (0.3 * pixel.red + 0.59 * pixel.green + 0.11 *pixel.blue)
-#       gray(gray_val)
-#     end
-#   }
-#   x.report("manipulate_pixels_with_export_pixels") {
-#     color = img(File.dirname(__FILE__) + "/../fixtures/color.jpg")
-#     color.manipulate_pixels_with_export_pixels(locations_array) do |pixel_array|
-#       gray_val = (0.3 * pixel_array[0] + 0.59 * pixel_array[1] + 0.11 * pixel_array[2])
-#       [gray_val, gray_val, gray_val]
-#     end
-#   }
-#   x.report("manipulate_pixels_with_view") {
-#     color = img(File.dirname(__FILE__) + "/../fixtures/color.jpg")
-#     color.manipulate_pixels_with_view(locations_array) do |pixel|
-#       gray_val = (0.3 * pixel.red + 0.59 * pixel.green + 0.11 *pixel.blue)
-#       gray(gray_val)
-#     end
-#   }
-# end
-# 
+img = img(File.dirname(__FILE__) + "/../fixtures/cart_gray.jpg")
+ 
+n = 10
+Benchmark.bm do |x|
+  x.report("two_d_array_with_view") { n.times do; ar = img.two_d_array_with_view; end }
+  x.report("two_d_array_with_export_pixels") { n.times do; ar = img.two_d_array_with_export_pixels; end }
+  x.report("two_d_array_with_dispatch") { n.times do; ar = img.two_d_array_with_dispatch; end }
+  x.report("two_d_array_with_get_pixels") { n.times do; ar = img.two_d_array_with_get_pixels; end }
+end
+
+color = img(File.dirname(__FILE__) + "/../fixtures/color.jpg")
+locations_array = []
+0.upto(color.columns-1) do |column|
+  0.upto(color.rows-1) do |row|
+    locations_array << [column,row]
+  end
+end
+
+
+Benchmark.bm do |x|
+  x.report("manipulate_pixels_with_get_pixels") {
+    color = img(File.dirname(__FILE__) + "/../fixtures/color.jpg")
+    color.manipulate_pixels_with_get_pixels(locations_array) do |pixel|
+      gray_val = (0.3 * pixel.red + 0.59 * pixel.green + 0.11 *pixel.blue)
+      gray(gray_val)
+    end
+  }
+  x.report("manipulate_pixels_with_export_pixels") {
+    color = img(File.dirname(__FILE__) + "/../fixtures/color.jpg")
+    color.manipulate_pixels_with_export_pixels(locations_array) do |pixel_array|
+      gray_val = (0.3 * pixel_array[0] + 0.59 * pixel_array[1] + 0.11 * pixel_array[2])
+      [gray_val, gray_val, gray_val]
+    end
+  }
+  x.report("manipulate_pixels_with_view") {
+    color = img(File.dirname(__FILE__) + "/../fixtures/color.jpg")
+    color.manipulate_pixels_with_view(locations_array) do |pixel|
+      gray_val = (0.3 * pixel.red + 0.59 * pixel.green + 0.11 *pixel.blue)
+      gray(gray_val)
+    end
+  }
+end
+
 n=100
 Benchmark.bmbm do |x|
   x.report("export_pixels_as_str") {
@@ -90,23 +90,17 @@ Benchmark.bmbm do |x|
     n.times {
       i = Image.new(150,150)
       i.import_pixels(0,0,150,150,"RGB",exported_pixels)
-      # i.destroy!
     }
-    # GC.start
   }
   x.report("store_pixels") {
     n.times {
       i = Image.new(150,150)
       i.store_pixels(0,0,150,150,getted_pixels)
-      # i.destroy!
     }
-    # GC.start
   }
   x.report("constitute") {
     n.times {
       i = Image.constitute(150,150,"RGB",dispatched_pixels)
-      # i.destroy!
     }
-    # GC.start
   }
 end
