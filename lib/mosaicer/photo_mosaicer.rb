@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'enumerator'
 
 class PhotoMosaicer
   VERBOSE = true
@@ -15,6 +16,7 @@ class PhotoMosaicer
   end
   
   def intensity_for_image_portion(x_offset, y_offset, columns, rows)
+    puts "calc intensity for image_portion #{x_offset}, #{y_offset}, #{columns}, #{rows}"
     intensity = 0
     pixel_count = 0
     x_offset.upto(x_offset + columns - 1) do |column|
@@ -110,12 +112,14 @@ class PhotoMosaicer
         x_offset = (column_array.first / @image_block_width) * @pixel_width
         y_offset = (row_array.first / @image_block_height) * @pixel_height
         
-        intensity = intensity_for_image_portion(x_offset, y_offset, @image_block_width, @image_block_height)
-        
+        intensity = intensity_for_image_portion(column_array.first, row_array.first, @image_block_width, @image_block_height)
+
         if @intensities
           # Find the closest image in our hash of source images
           nearest_intensity = @intensities.detect {|i| intensity <= i} || @intensities.last
           nearest_intensity_image = @image_hash[nearest_intensity]
+          
+          # puts "x, y = #{x_offset}, #{y_offset}: #{intensity} : #{nearest_intensity_image.filename}"
         else
           bg_color = "rgb(#{intensity},#{intensity},#{intensity})"
           nearest_intensity_image = Image.new(@pixel_height, @pixel_width) do
