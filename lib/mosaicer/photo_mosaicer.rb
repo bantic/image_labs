@@ -16,7 +16,6 @@ class PhotoMosaicer
   end
   
   def intensity_for_image_portion(x_offset, y_offset, columns, rows)
-    puts "calc intensity for image_portion #{x_offset}, #{y_offset}, #{columns}, #{rows}"
     intensity = 0
     pixel_count = 0
     x_offset.upto(x_offset + columns - 1) do |column|
