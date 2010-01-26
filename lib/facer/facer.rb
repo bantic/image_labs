@@ -6,6 +6,34 @@ class Facer
       )
   end
   
+  def self.cut_out_face(face_img)
+    rm_img = face_img
+    cv_img = OpenCV::IplImage.load(rm_img.filename)
+    
+    detector = self.face_detector
+    face_rectangles = detector.detect_objects(cv_img)
+    rect = face_rectangles.first
+    
+    rm_img.crop( rect.top_left.x, 
+                 rect.top_left.y, 
+                 (rect.bottom_right.x - rect.top_left.x),
+                 (rect.bottom_right.y - rect.top_left.y) )
+  end
+  
+  def self.split_up_face(face_img)
+    height = face_img.rows / 3
+    
+    puts height
+    
+    width  = face_img.columns
+    
+    puts width
+    
+    top, middle, bottom = face_img.crop(0, 0, width, height),
+                          face_img.crop(0, height, width, height),
+                          face_img.crop(0, height *2, width, height)
+  end
+  
   def self.put_funny_hat_on_celebrity(celebrity_img)
     rm_img = celebrity_img
     cv_img = OpenCV::IplImage.load(r_img.filename)
