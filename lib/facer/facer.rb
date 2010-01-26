@@ -6,7 +6,7 @@ class Facer
       )
   end
   
-  def self.cut_out_face(face_img)
+  def self.cut_out_face(face_img, nudge=true)
     rm_img = face_img
     cv_img = OpenCV::IplImage.load(rm_img.filename)
     
@@ -14,25 +14,44 @@ class Facer
     face_rectangles = detector.detect_objects(cv_img)
     rect = face_rectangles.first
     
-    rm_img.crop( rect.top_left.x, 
+    rm_img.crop!( rect.top_left.x, 
                  rect.top_left.y, 
                  (rect.bottom_right.x - rect.top_left.x),
-                 (rect.bottom_right.y - rect.top_left.y) )
+                 (rect.bottom_right.y - rect.top_left.y), true )
+    if nudge
+      w,h = rm_img.columns, rm_img.rows
+      rm_img.crop!( 0.15 * w , 0, 0.7 * w, h, true)
+    end
+    rm_img
   end
   
   def self.split_up_face(face_img)
     height = face_img.rows / 3
-    
-    puts height
-    
     width  = face_img.columns
     
-    puts width
+    top, middle, bottom = face_img.crop(0, 0, width, height, true),
+                          face_img.crop(0, height, width, height, true),
+                          face_img.crop(0, height *2, width, height, true)
     
-    top, middle, bottom = face_img.crop(0, 0, width, height),
-                          face_img.crop(0, height, width, height),
-                          face_img.crop(0, height *2, width, height)
+    puts top.intensity
+    puts middle.intensity
+    puts bottom.intensity
+    [top,middle,bottom]
   end
+  
+  def self.has_beard?(face)
+    face = self.cut_out_face(face)
+    t,m,b = self.split_up_face(face)
+    
+    if b.intensity < m.intensity
+      puts "yes"
+    else
+      puts "no"
+    end
+    return [face, t, m, b]
+  rescue => e
+    nil
+    end
   
   def self.put_funny_hat_on_celebrity(celebrity_img)
     rm_img = celebrity_img
